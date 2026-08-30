@@ -14,10 +14,32 @@
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/tvRol"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="Sesión iniciada correctamente ✅"
+        android:layout_marginTop="6dp"
         android:textSize="15sp" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnMisCursosProfesor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:text="Mis cursos (administrar)" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnCursosDisponibles"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:text="Cursos disponibles" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnMisCursosEstudiante"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:text="Mis cursos" />
 
 </LinearLayout>

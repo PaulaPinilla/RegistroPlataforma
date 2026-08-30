@@ -15,4 +15,7 @@ public interface UserDao {
 
     @Query("SELECT * FROM usuarios WHERE correo = :correo AND password = :password LIMIT 1")
     User login(String correo, String password);
+
+    @Query("UPDATE usuarios SET password = :nuevaPassword WHERE correo = :correo")
+    void actualizarPassword(String correo, String nuevaPassword);
 }

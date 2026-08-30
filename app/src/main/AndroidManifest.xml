@@ -26,6 +26,30 @@
             android:name=".HomeActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".ForgotPasswordActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".CourseListActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".CourseFormActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".AvailableCoursesActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".CourseDetailActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".MyCoursesActivity"
+            android:exported="false" />
+
     </application>
 
 </manifest>
