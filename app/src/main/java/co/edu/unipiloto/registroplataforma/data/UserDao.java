@@ -10,6 +10,9 @@ public interface UserDao {
     @Query("SELECT * FROM usuarios WHERE correo = :correo LIMIT 1")
     User buscarPorCorreo(String correo);
 
+    @Query("SELECT * FROM usuarios WHERE id = :id LIMIT 1")
+    User obtenerPorId(int id);
+
     @Insert
     long insertar(User user);
 

@@ -21,6 +21,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
         void onVerDetalle(Course curso);
         default void onEditar(Course curso) {}
         default void onEliminar(Course curso) {}
+        default void onVerContenido(Course curso) {}
     }
 
     private final List<Course> cursos = new ArrayList<>();
@@ -80,6 +81,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseView
                 case PROFESOR:
                     binding.btnAccionPrincipal.setVisibility(View.GONE);
                     binding.rowAccionesProfesor.setVisibility(View.VISIBLE);
+                    binding.btnContenido.setOnClickListener(v -> listener.onVerContenido(curso));
                     binding.btnEditar.setOnClickListener(v -> listener.onEditar(curso));
                     binding.btnEliminar.setOnClickListener(v -> listener.onEliminar(curso));
                     break;

@@ -74,13 +74,20 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
             db.userDao().actualizarPassword(correo, nuevaPassword);
 
+            new Thread(() -> EmailSender.enviar(
+                    correo,
+                    "Tu contraseña fue restablecida",
+                    "Hola " + existente.getNombre() + ",\n\n" +
+                            "Tu contraseña de la plataforma académica se actualizó correctamente."
+            )).start();
+
             runOnUiThread(() -> mostrarConfirmacion(correo));
         });
     }
 
     private void mostrarConfirmacion(String correo) {
         new AlertDialog.Builder(this)
-                .setTitle("Contraseña actualizada ")
+                .setTitle("Contraseña actualizada ✅")
                 .setMessage("Tu contraseña se restableció correctamente. Ya puedes iniciar sesión con la nueva.")
                 .setCancelable(false)
                 .setPositiveButton("Ir a iniciar sesión", (dialog, which) -> {

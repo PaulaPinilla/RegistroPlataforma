@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -18,37 +20,22 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".LoginActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".HomeActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ForgotPasswordActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".CourseListActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".CourseFormActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".AvailableCoursesActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".CourseDetailActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".MyCoursesActivity"
-            android:exported="false" />
+        <activity android:name=".LoginActivity" android:exported="false" />
+        <activity android:name=".HomeActivity" android:exported="false" />
+        <activity android:name=".ForgotPasswordActivity" android:exported="false" />
+        <activity android:name=".CourseListActivity" android:exported="false" />
+        <activity android:name=".CourseFormActivity" android:exported="false" />
+        <activity android:name=".AvailableCoursesActivity" android:exported="false" />
+        <activity android:name=".CourseDetailActivity" android:exported="false" />
+        <activity android:name=".MyCoursesActivity" android:exported="false" />
+        <activity android:name=".UnitListActivity" android:exported="false" />
+        <activity android:name=".LessonListActivity" android:exported="false" />
+        <activity android:name=".LessonFormActivity" android:exported="false" />
+        <activity android:name=".LessonDetailActivity" android:exported="false" />
+        <activity android:name=".AssignmentListActivity" android:exported="false" />
+        <activity android:name=".AssignmentFormActivity" android:exported="false" />
+        <activity android:name=".AssignmentDetailActivity" android:exported="false" />
+        <activity android:name=".SubmissionListActivity" android:exported="false" />
 
     </application>
 

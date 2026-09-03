@@ -17,9 +17,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Cursos disponibles"
+        android:text="Actividades"
         android:textSize="22sp"
         android:textStyle="bold" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnAgregarActividad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:text="+ Agregar actividad" />
 
     <TextView
         android:id="@+id/tvVacio"
@@ -27,11 +34,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:gravity="center"
-        android:text="Ya estás inscrito en todos los cursos disponibles."
+        android:text="Aún no hay actividades en este curso."
         android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvCursos"
+        android:id="@+id/rvActividades"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"

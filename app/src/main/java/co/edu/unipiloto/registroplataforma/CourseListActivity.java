@@ -35,6 +35,8 @@ public class CourseListActivity extends AppCompatActivity {
         profesorId = getIntent().getIntExtra("profesorId", -1);
         profesorNombre = getIntent().getStringExtra("profesorNombre");
 
+        binding.btnVolver.setOnClickListener(v -> finish());
+
         adapter = new CourseAdapter(CourseAdapter.Modo.PROFESOR, new CourseAdapter.OnCourseActionListener() {
             @Override
             public void onVerDetalle(Course curso) {
@@ -49,6 +51,15 @@ public class CourseListActivity extends AppCompatActivity {
             @Override
             public void onEliminar(Course curso) {
                 confirmarEliminar(curso);
+            }
+
+            @Override
+            public void onVerContenido(Course curso) {
+                Intent intent = new Intent(CourseListActivity.this, UnitListActivity.class);
+                intent.putExtra("cursoId", curso.getId());
+                intent.putExtra("cursoTitulo", curso.getTitulo());
+                intent.putExtra("profesorId", profesorId);
+                startActivity(intent);
             }
         });
 

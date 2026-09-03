@@ -19,7 +19,7 @@
             android:padding="8dp" />
 
         <TextView
-            android:id="@+id/tvTituloCurso"
+            android:id="@+id/tvTituloLeccion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -27,26 +27,26 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/tvProfesorCurso"
+            android:id="@+id/tvTipoLeccion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
-            android:textStyle="italic"
             android:textSize="14sp" />
 
-        <TextView
-            android:id="@+id/tvDescripcionCurso"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAbrirMaterial"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:textSize="16sp" />
+            android:layout_marginTop="28dp"
+            android:text="Abrir material" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnInscribirme"
+            android:id="@+id/btnMarcarCompletada"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:text="Inscribirme" />
+            android:layout_marginTop="14dp"
+            android:text="Marcar como completada" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

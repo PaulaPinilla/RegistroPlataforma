@@ -20,63 +20,84 @@
             android:padding="8dp" />
 
         <TextView
-            android:id="@+id/tvTitulo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:text="Nueva lección"
             android:textSize="24sp"
             android:textStyle="bold" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilTituloCurso"
+            android:id="@+id/tilTituloLeccion"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:hint="Título del curso">
+            android:hint="Título de la lección">
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etTituloCurso"
+                android:id="@+id/etTituloLeccion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textCapSentences" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilDescripcionCurso"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Tipo de material:"
+            android:textStyle="bold" />
+
+        <RadioGroup
+            android:id="@+id/rgTipo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="Descripción del curso">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etDescripcionCurso"
-                android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_marginTop="6dp">
+
+            <RadioButton
+                android:id="@+id/rbVideo"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:minLines="3"
-                android:gravity="top"
-                android:inputType="textMultiLine|textCapSentences" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_weight="1"
+                android:checked="true"
+                android:text="Video" />
+
+            <RadioButton
+                android:id="@+id/rbDocumento"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Documento" />
+
+            <RadioButton
+                android:id="@+id/rbOtro"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Otro" />
+        </RadioGroup>
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilContrasenaCurso"
+            android:id="@+id/tilUrlMaterial"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="Contraseña para inscribirse al curso"
-            app:endIconMode="password_toggle">
+            android:layout_marginTop="20dp"
+            android:hint="Enlace del material (YouTube, Drive, etc.)">
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etContrasenaCurso"
+                android:id="@+id/etUrlMaterial"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPassword" />
+                android:inputType="textUri" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnGuardar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp" />
+            android:layout_marginTop="28dp"
+            android:text="Crear lección" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

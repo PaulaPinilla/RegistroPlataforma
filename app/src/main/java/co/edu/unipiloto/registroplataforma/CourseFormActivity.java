@@ -34,6 +34,8 @@ public class CourseFormActivity extends AppCompatActivity {
         profesorNombre = getIntent().getStringExtra("profesorNombre");
         cursoId = getIntent().getIntExtra("cursoId", -1);
 
+        binding.btnVolver.setOnClickListener(v -> finish());
+
         boolean esEdicion = cursoId != -1;
         binding.tvTitulo.setText(esEdicion ? "Editar curso" : "Crear curso");
         binding.btnGuardar.setText(esEdicion ? "Guardar cambios" : "Crear curso");
@@ -52,6 +54,7 @@ public class CourseFormActivity extends AppCompatActivity {
             runOnUiThread(() -> {
                 binding.etTituloCurso.setText(cursoExistente.getTitulo());
                 binding.etDescripcionCurso.setText(cursoExistente.getDescripcion());
+                binding.etContrasenaCurso.setText(cursoExistente.getContrasenaCurso());
             });
         });
     }
@@ -59,9 +62,11 @@ public class CourseFormActivity extends AppCompatActivity {
     private void guardar() {
         binding.tilTituloCurso.setError(null);
         binding.tilDescripcionCurso.setError(null);
+        binding.tilContrasenaCurso.setError(null);
 
         String titulo = binding.etTituloCurso.getText().toString().trim();
         String descripcion = binding.etDescripcionCurso.getText().toString().trim();
+        String contrasena = binding.etContrasenaCurso.getText().toString().trim();
 
         boolean valido = true;
 
@@ -75,6 +80,11 @@ public class CourseFormActivity extends AppCompatActivity {
             valido = false;
         }
 
+        if (contrasena.length() < 4) {
+            binding.tilContrasenaCurso.setError("Mínimo 4 caracteres");
+            valido = false;
+        }
+
         if (!valido) return;
 
         boolean esEdicion = cursoId != -1;
@@ -83,9 +93,10 @@ public class CourseFormActivity extends AppCompatActivity {
             if (esEdicion && cursoExistente != null) {
                 cursoExistente.setTitulo(titulo);
                 cursoExistente.setDescripcion(descripcion);
+                cursoExistente.setContrasenaCurso(contrasena);
                 db.courseDao().actualizar(cursoExistente);
             } else {
-                db.courseDao().insertar(new Course(titulo, descripcion, profesorId, profesorNombre));
+                db.courseDao().insertar(new Course(titulo, descripcion, profesorId, profesorNombre, contrasena));
             }
             runOnUiThread(() -> mostrarConfirmacion(esEdicion));
         });
@@ -93,10 +104,10 @@ public class CourseFormActivity extends AppCompatActivity {
 
     private void mostrarConfirmacion(boolean esEdicion) {
         new AlertDialog.Builder(this)
-                .setTitle(esEdicion ? "Curso actualizado " : "Curso creado ")
+                .setTitle(esEdicion ? "Curso actualizado ✅" : "Curso creado 🎉")
                 .setMessage(esEdicion
                         ? "Los cambios se guardaron correctamente."
-                        : "El curso ya está disponible para que los estudiantes se inscriban.")
+                        : "El curso ya está disponible. Comparte la contraseña con tus estudiantes.")
                 .setCancelable(false)
                 .setPositiveButton("Aceptar", (dialog, which) -> finish())
                 .show();

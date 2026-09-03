@@ -6,8 +6,17 @@
     android:padding="20dp">
 
     <TextView
+        android:id="@+id/btnVolver"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="← Volver"
+        android:textStyle="bold"
+        android:padding="8dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:text="Mis cursos"
         android:textSize="22sp"
         android:textStyle="bold" />

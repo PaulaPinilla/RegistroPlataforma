@@ -1,5 +1,6 @@
 package co.edu.unipiloto.registroplataforma;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,7 +32,15 @@ public class MyCoursesActivity extends AppCompatActivity {
         db = AppDatabase.getInstance(this);
         estudianteId = getIntent().getIntExtra("estudianteId", -1);
 
-        adapter = new CourseAdapter(CourseAdapter.Modo.INSCRITO, curso -> { /* solo lectura */ });
+        binding.btnVolver.setOnClickListener(v -> finish());
+
+        adapter = new CourseAdapter(CourseAdapter.Modo.INSCRITO, curso -> {
+            Intent intent = new Intent(this, UnitListActivity.class);
+            intent.putExtra("cursoId", curso.getId());
+            intent.putExtra("cursoTitulo", curso.getTitulo());
+            intent.putExtra("estudianteId", estudianteId);
+            startActivity(intent);
+        });
 
         binding.rvCursos.setLayoutManager(new LinearLayoutManager(this));
         binding.rvCursos.setAdapter(adapter);

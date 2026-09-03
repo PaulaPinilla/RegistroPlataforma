@@ -1,6 +1,8 @@
 package co.edu.unipiloto.registroplataforma;
 
 import android.os.Bundle;
+import android.text.InputType;
+import android.widget.EditText;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,6 +23,7 @@ public class CourseDetailActivity extends AppCompatActivity {
 
     private int cursoId;
     private int estudianteId;
+    private Course cursoActual;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +35,8 @@ public class CourseDetailActivity extends AppCompatActivity {
         cursoId = getIntent().getIntExtra("cursoId", -1);
         estudianteId = getIntent().getIntExtra("estudianteId", -1);
 
-        binding.btnInscribirme.setOnClickListener(v -> inscribirme());
+        binding.btnVolver.setOnClickListener(v -> finish());
+        binding.btnInscribirme.setOnClickListener(v -> pedirContrasenaYInscribir());
         cargarCurso();
     }
 
@@ -46,16 +50,44 @@ public class CourseDetailActivity extends AppCompatActivity {
                     finish();
                     return;
                 }
+                cursoActual = curso;
                 binding.tvTituloCurso.setText(curso.getTitulo());
                 binding.tvDescripcionCurso.setText(curso.getDescripcion());
                 binding.tvProfesorCurso.setText("Profesor: " + curso.getProfesorNombre());
 
                 if (yaInscrito) {
                     binding.btnInscribirme.setEnabled(false);
-                    binding.btnInscribirme.setText("Ya estás inscrito ");
+                    binding.btnInscribirme.setText("Ya estás inscrito ✅");
                 }
             });
         });
+    }
+
+    private void pedirContrasenaYInscribir() {
+        if (cursoActual == null) return;
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        input.setHint("Contraseña del curso");
+
+        new AlertDialog.Builder(this)
+                .setTitle("Ingresa la contraseña del curso")
+                .setMessage("Pídesela a tu profesor si no la tienes.")
+                .setView(input)
+                .setNegativeButton("Cancelar", null)
+                .setPositiveButton("Inscribirme", (dialog, which) -> {
+                    String ingresada = input.getText().toString();
+                    if (ingresada.equals(cursoActual.getContrasenaCurso())) {
+                        inscribirme();
+                    } else {
+                        new AlertDialog.Builder(this)
+                                .setTitle("Contraseña incorrecta")
+                                .setMessage("Intenta de nuevo.")
+                                .setPositiveButton("Aceptar", null)
+                                .show();
+                    }
+                })
+                .show();
     }
 
     private void inscribirme() {
@@ -77,7 +109,7 @@ public class CourseDetailActivity extends AppCompatActivity {
 
     private void mostrarConfirmacion() {
         new AlertDialog.Builder(this)
-                .setTitle("¡Inscripción exitosa!")
+                .setTitle("¡Inscripción exitosa! ")
                 .setMessage("El curso ya aparece en tu sección \"Mis cursos\".")
                 .setCancelable(false)
                 .setPositiveButton("Aceptar", (dialog, which) -> finish())

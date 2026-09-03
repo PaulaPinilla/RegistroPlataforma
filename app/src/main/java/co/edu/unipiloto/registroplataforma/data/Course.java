@@ -13,12 +13,14 @@ public class Course {
     private String descripcion;
     private int profesorId;
     private String profesorNombre;
+    private String contrasenaCurso;
 
-    public Course(String titulo, String descripcion, int profesorId, String profesorNombre) {
+    public Course(String titulo, String descripcion, int profesorId, String profesorNombre, String contrasenaCurso) {
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.profesorId = profesorId;
         this.profesorNombre = profesorNombre;
+        this.contrasenaCurso = contrasenaCurso;
     }
 
     public int getId() { return id; }
@@ -33,4 +35,7 @@ public class Course {
     public int getProfesorId() { return profesorId; }
 
     public String getProfesorNombre() { return profesorNombre; }
+
+    public String getContrasenaCurso() { return contrasenaCurso; }
+    public void setContrasenaCurso(String contrasenaCurso) { this.contrasenaCurso = contrasenaCurso; }
 }

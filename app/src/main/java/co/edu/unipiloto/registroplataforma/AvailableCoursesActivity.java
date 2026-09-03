@@ -32,6 +32,8 @@ public class AvailableCoursesActivity extends AppCompatActivity {
         db = AppDatabase.getInstance(this);
         estudianteId = getIntent().getIntExtra("estudianteId", -1);
 
+        binding.btnVolver.setOnClickListener(v -> finish());
+
         adapter = new CourseAdapter(CourseAdapter.Modo.DISPONIBLE, curso -> abrirDetalle(curso.getId()));
 
         binding.rvCursos.setLayoutManager(new LinearLayoutManager(this));

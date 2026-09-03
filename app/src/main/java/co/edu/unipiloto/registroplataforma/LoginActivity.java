@@ -55,11 +55,22 @@ public class LoginActivity extends AppCompatActivity {
         executor.execute(() -> {
             User usuario = db.userDao().login(correo, password);
 
+            if (usuario != null) {
+                Log.d("LoginActivity", "Usuario logueado con rol: " + usuario.getRol());
+                final User usuarioFinal = usuario;
+                new Thread(() -> EmailSender.enviar(
+                        usuarioFinal.getCorreo(),
+                        "Inicio de sesión detectado",
+                        "Hola " + usuarioFinal.getNombre() + ",\n\n" +
+                                "Se acaba de iniciar sesión en tu cuenta de la plataforma académica.\n\n" +
+                                "Si no fuiste tú, cambia tu contraseña de inmediato desde la app."
+                )).start();
+            }
+
             runOnUiThread(() -> {
                 if (usuario == null) {
                     binding.tilPassword.setError("Correo o contraseña incorrectos");
                 } else {
-                    Log.d("LoginActivity", "Usuario logueado con rol: " + usuario.getRol());
                     Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                     intent.putExtra("usuarioId", usuario.getId());
                     intent.putExtra("nombre", usuario.getNombre());
