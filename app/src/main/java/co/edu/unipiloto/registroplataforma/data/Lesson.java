@@ -8,7 +8,6 @@ public class Lesson {
 
     public static final String TIPO_VIDEO = "VIDEO";
     public static final String TIPO_DOCUMENTO = "DOCUMENTO";
-    public static final String TIPO_OTRO = "OTRO";
 
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -17,12 +16,14 @@ public class Lesson {
     private String titulo;
     private String tipo;
     private String urlMaterial;
+    private String contenidoTexto;
 
-    public Lesson(int unidadId, String titulo, String tipo, String urlMaterial) {
+    public Lesson(int unidadId, String titulo, String tipo, String urlMaterial, String contenidoTexto) {
         this.unidadId = unidadId;
         this.titulo = titulo;
         this.tipo = tipo;
         this.urlMaterial = urlMaterial;
+        this.contenidoTexto = contenidoTexto;
     }
 
     public int getId() { return id; }
@@ -35,4 +36,8 @@ public class Lesson {
     public String getTipo() { return tipo; }
 
     public String getUrlMaterial() { return urlMaterial; }
+
+    public String getContenidoTexto() { return contenidoTexto; }
+
+    public boolean esTexto() { return contenidoTexto != null; }
 }

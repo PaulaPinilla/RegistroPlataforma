@@ -25,7 +25,7 @@ public class AssignmentListActivity extends AppCompatActivity {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
-    private int cursoId;
+    private int unidadId;
     private int profesorId;
     private int estudianteId;
     private boolean esProfesor;
@@ -37,7 +37,7 @@ public class AssignmentListActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         db = AppDatabase.getInstance(this);
-        cursoId = getIntent().getIntExtra("cursoId", -1);
+        unidadId = getIntent().getIntExtra("unidadId", -1);
         profesorId = getIntent().getIntExtra("profesorId", -1);
         estudianteId = getIntent().getIntExtra("estudianteId", -1);
         esProfesor = profesorId != -1;
@@ -46,7 +46,7 @@ public class AssignmentListActivity extends AppCompatActivity {
         binding.btnAgregarActividad.setVisibility(esProfesor ? android.view.View.VISIBLE : android.view.View.GONE);
         binding.btnAgregarActividad.setOnClickListener(v -> {
             Intent intent = new Intent(this, AssignmentFormActivity.class);
-            intent.putExtra("cursoId", cursoId);
+            intent.putExtra("unidadId", unidadId);
             startActivity(intent);
         });
 
@@ -75,10 +75,10 @@ public class AssignmentListActivity extends AppCompatActivity {
 
     private void cargarActividades() {
         executor.execute(() -> {
-            List<Assignment> actividades = db.assignmentDao().listarPorCurso(cursoId);
+            List<Assignment> actividades = db.assignmentDao().listarPorUnidad(unidadId);
             List<SimpleListAdapter.Item> items = new ArrayList<>();
             for (Assignment a : actividades) {
-                String subtitulo = "Entrega antes del " + formato.format(a.getFechaLimite());
+                String subtitulo = categoriaLegible(a.getCategoria()) + " — Entrega antes del " + formato.format(a.getFechaLimite());
                 boolean entregada = !esProfesor && db.submissionDao().obtenerEntrega(a.getId(), estudianteId) != null;
                 items.add(new SimpleListAdapter.Item(a.getId(), a.getTitulo(), subtitulo, entregada));
             }
@@ -87,5 +87,14 @@ public class AssignmentListActivity extends AppCompatActivity {
                 binding.tvVacio.setVisibility(items.isEmpty() ? android.view.View.VISIBLE : android.view.View.GONE);
             });
         });
+    }
+
+    static String categoriaLegible(String categoria) {
+        if (Assignment.CATEGORIA_PARCIAL.equals(categoria)) return "Parcial";
+        if (Assignment.CATEGORIA_QUIZ.equals(categoria)) return "Quiz";
+        if (Assignment.CATEGORIA_FORO.equals(categoria)) return "Foro";
+        if (Assignment.CATEGORIA_VIDEO.equals(categoria)) return "Video";
+        if (Assignment.CATEGORIA_PREGUNTAS.equals(categoria)) return "Preguntas";
+        return "🛠 Taller";
     }
 }

@@ -96,7 +96,8 @@ public class CourseFormActivity extends AppCompatActivity {
                 cursoExistente.setContrasenaCurso(contrasena);
                 db.courseDao().actualizar(cursoExistente);
             } else {
-                db.courseDao().insertar(new Course(titulo, descripcion, profesorId, profesorNombre, contrasena));
+                db.courseDao().insertar(new Course(titulo, descripcion, profesorId, profesorNombre,
+                        contrasena, Course.ESTADO_PENDIENTE));
             }
             runOnUiThread(() -> mostrarConfirmacion(esEdicion));
         });
@@ -104,10 +105,10 @@ public class CourseFormActivity extends AppCompatActivity {
 
     private void mostrarConfirmacion(boolean esEdicion) {
         new AlertDialog.Builder(this)
-                .setTitle(esEdicion ? "Curso actualizado ✅" : "Curso creado 🎉")
+                .setTitle(esEdicion ? "Curso actualizado" : "Curso creado")
                 .setMessage(esEdicion
                         ? "Los cambios se guardaron correctamente."
-                        : "El curso ya está disponible. Comparte la contraseña con tus estudiantes.")
+                        : "Tu curso quedó pendiente de aprobación por un coordinador antes de que los estudiantes puedan verlo.")
                 .setCancelable(false)
                 .setPositiveButton("Aceptar", (dialog, which) -> finish())
                 .show();

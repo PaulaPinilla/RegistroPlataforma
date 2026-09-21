@@ -6,6 +6,10 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "cursos")
 public class Course {
 
+    public static final String ESTADO_PENDIENTE = "PENDIENTE";
+    public static final String ESTADO_APROBADO = "APROBADO";
+    public static final String ESTADO_RECHAZADO = "RECHAZADO";
+
     @PrimaryKey(autoGenerate = true)
     private int id;
 
@@ -14,13 +18,16 @@ public class Course {
     private int profesorId;
     private String profesorNombre;
     private String contrasenaCurso;
+    private String estado;
 
-    public Course(String titulo, String descripcion, int profesorId, String profesorNombre, String contrasenaCurso) {
+    public Course(String titulo, String descripcion, int profesorId, String profesorNombre,
+                  String contrasenaCurso, String estado) {
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.profesorId = profesorId;
         this.profesorNombre = profesorNombre;
         this.contrasenaCurso = contrasenaCurso;
+        this.estado = estado;
     }
 
     public int getId() { return id; }
@@ -38,4 +45,7 @@ public class Course {
 
     public String getContrasenaCurso() { return contrasenaCurso; }
     public void setContrasenaCurso(String contrasenaCurso) { this.contrasenaCurso = contrasenaCurso; }
+
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
 }

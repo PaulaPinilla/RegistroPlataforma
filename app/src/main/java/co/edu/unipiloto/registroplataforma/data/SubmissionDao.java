@@ -25,4 +25,7 @@ public interface SubmissionDao {
 
     @Query("SELECT * FROM entregas WHERE actividadId = :actividadId ORDER BY fechaEntrega DESC")
     List<Submission> listarPorActividad(int actividadId);
+
+    @Query("UPDATE entregas SET calificacion = :calificacion, retroalimentacion = :retro WHERE id = :submissionId")
+    void calificar(int submissionId, Double calificacion, String retro);
 }

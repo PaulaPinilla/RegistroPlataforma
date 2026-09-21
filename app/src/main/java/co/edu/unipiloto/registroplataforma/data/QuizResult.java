@@ -3,28 +3,24 @@ package co.edu.unipiloto.registroplataforma.data;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "entregas")
-public class Submission {
+@Entity(tableName = "resultados_evaluacion")
+public class QuizResult {
+
     @PrimaryKey(autoGenerate = true)
     private int id;
 
     private int actividadId;
     private int estudianteId;
-    private String uriArchivo;
-    private String nombreArchivo;
-    private String textoRespuesta;
-    private long fechaEntrega;
+    private String respuestas;
+    private long fechaEnvio;
     private Double calificacion;
     private String retroalimentacion;
 
-    public Submission(int actividadId, int estudianteId, String uriArchivo, String nombreArchivo,
-                      String textoRespuesta, long fechaEntrega) {
+    public QuizResult(int actividadId, int estudianteId, String respuestas, long fechaEnvio) {
         this.actividadId = actividadId;
         this.estudianteId = estudianteId;
-        this.uriArchivo = uriArchivo;
-        this.nombreArchivo = nombreArchivo;
-        this.textoRespuesta = textoRespuesta;
-        this.fechaEntrega = fechaEntrega;
+        this.respuestas = respuestas;
+        this.fechaEnvio = fechaEnvio;
     }
 
     public int getId() { return id; }
@@ -32,10 +28,8 @@ public class Submission {
 
     public int getActividadId() { return actividadId; }
     public int getEstudianteId() { return estudianteId; }
-    public String getUriArchivo() { return uriArchivo; }
-    public String getNombreArchivo() { return nombreArchivo; }
-    public String getTextoRespuesta() { return textoRespuesta; }
-    public long getFechaEntrega() { return fechaEntrega; }
+    public String getRespuestas() { return respuestas; }
+    public long getFechaEnvio() { return fechaEnvio; }
 
     public Double getCalificacion() { return calificacion; }
     public void setCalificacion(Double calificacion) { this.calificacion = calificacion; }
@@ -43,6 +37,5 @@ public class Submission {
     public String getRetroalimentacion() { return retroalimentacion; }
     public void setRetroalimentacion(String retroalimentacion) { this.retroalimentacion = retroalimentacion; }
 
-    public boolean esTexto() { return textoRespuesta != null; }
     public boolean estaCalificada() { return calificacion != null; }
 }

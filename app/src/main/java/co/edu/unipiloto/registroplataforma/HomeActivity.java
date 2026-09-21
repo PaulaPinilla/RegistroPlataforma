@@ -2,7 +2,7 @@ package co.edu.unipiloto.registroplataforma;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -25,16 +25,38 @@ public class HomeActivity extends AppCompatActivity {
         if (nombre == null) nombre = "";
         if (rol == null) rol = User.ROL_ESTUDIANTE;
 
-        Log.d("HomeActivity", "Rol recibido en Home: " + rol);
-
         binding.tvBienvenida.setText("¡Hola, " + nombre + "! ");
 
         boolean esProfesor = User.ROL_PROFESOR.equals(rol);
+        boolean esCoordinador = User.ROL_COORDINADOR.equals(rol);
+
+        if (esCoordinador) {
+            binding.tvRol.setText("Rol: Coordinador");
+            binding.btnMisCursosProfesor.setVisibility(View.GONE);
+            binding.btnCursosDisponibles.setVisibility(View.GONE);
+            binding.btnMisCursosEstudiante.setVisibility(View.GONE);
+
+            binding.btnCursosPendientes.setVisibility(View.VISIBLE);
+            binding.btnTodosCursos.setVisibility(View.VISIBLE);
+            binding.btnEstadisticas.setVisibility(View.VISIBLE);
+            binding.btnAdministrarUsuarios.setVisibility(View.VISIBLE);
+
+            binding.btnCursosPendientes.setOnClickListener(v ->
+                    startActivity(new Intent(this, PendingCoursesActivity.class)));
+            binding.btnTodosCursos.setOnClickListener(v ->
+                    startActivity(new Intent(this, AllCoursesActivity.class)));
+            binding.btnEstadisticas.setOnClickListener(v ->
+                    startActivity(new Intent(this, StatsActivity.class)));
+            binding.btnAdministrarUsuarios.setOnClickListener(v ->
+                    startActivity(new Intent(this, UserManagementActivity.class)));
+            return;
+        }
+
         binding.tvRol.setText(esProfesor ? "Rol: Profesor" : "Rol: Estudiante");
 
-        binding.btnMisCursosProfesor.setVisibility(esProfesor ? android.view.View.VISIBLE : android.view.View.GONE);
-        binding.btnCursosDisponibles.setVisibility(esProfesor ? android.view.View.GONE : android.view.View.VISIBLE);
-        binding.btnMisCursosEstudiante.setVisibility(esProfesor ? android.view.View.GONE : android.view.View.VISIBLE);
+        binding.btnMisCursosProfesor.setVisibility(esProfesor ? View.VISIBLE : View.GONE);
+        binding.btnCursosDisponibles.setVisibility(esProfesor ? View.GONE : View.VISIBLE);
+        binding.btnMisCursosEstudiante.setVisibility(esProfesor ? View.GONE : View.VISIBLE);
 
         final int idFinal = usuarioId;
         final String nombreFinal = nombre;

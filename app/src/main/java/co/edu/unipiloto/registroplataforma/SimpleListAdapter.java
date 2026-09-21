@@ -83,7 +83,7 @@ public class SimpleListAdapter extends RecyclerView.Adapter<SimpleListAdapter.Vi
             } else {
                 binding.tvSubtitulo.setVisibility(View.GONE);
             }
-            binding.tvEstado.setText(item.marcada ? "✅" : "⬜");
+            binding.tvEstado.setText(item.marcada ? "" : "");
             binding.getRoot().setOnClickListener(v -> listener.onClick(item));
         }
     }

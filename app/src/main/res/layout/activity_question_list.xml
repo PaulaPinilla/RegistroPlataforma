@@ -22,19 +22,19 @@
         android:textStyle="bold" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnForos"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:id="@+id/btnAgregarPregunta"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="14dp"
-        android:text="Foros del curso" />
+        android:text="+ Agregar pregunta" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnAgregarUnidad"
+        android:id="@+id/btnVerResultados"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="+ Agregar unidad" />
+        android:text="Ver resultados de estudiantes" />
 
     <TextView
         android:id="@+id/tvVacio"
@@ -42,11 +42,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:gravity="center"
-        android:text="Aún no hay unidades en este curso."
+        android:text="Aún no hay preguntas en esta evaluación."
         android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvUnidades"
+        android:id="@+id/rvPreguntas"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"

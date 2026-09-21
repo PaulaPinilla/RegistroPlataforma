@@ -27,15 +27,14 @@ public class LoginActivity extends AppCompatActivity {
 
         db = AppDatabase.getInstance(this);
 
-        String correoPrellenado = getIntent().getStringExtra("correo_prellenado");
-        if (correoPrellenado != null) {
-            binding.etCorreo.setText(correoPrellenado);
+        String usuarioPrellenado = getIntent().getStringExtra("usuario_prellenado");
+        if (usuarioPrellenado != null) {
+            binding.etUsuario.setText(usuarioPrellenado);
         }
 
         binding.btnLogin.setOnClickListener(v -> intentarLogin());
-        binding.tvIrRegistro.setOnClickListener(v -> {
+        binding.btnIrRegistro.setOnClickListener(v -> {
             startActivity(new Intent(this, RegisterActivity.class));
-            finish();
         });
         binding.tvOlvideContrasena.setOnClickListener(v ->
                 startActivity(new Intent(this, ForgotPasswordActivity.class)));
@@ -44,20 +43,20 @@ public class LoginActivity extends AppCompatActivity {
     private void intentarLogin() {
         binding.tilPassword.setError(null);
 
-        String correo = binding.etCorreo.getText().toString().trim();
+        String usuario = binding.etUsuario.getText().toString().trim();
         String password = binding.etPassword.getText().toString();
 
-        if (correo.isEmpty() || password.isEmpty()) {
-            binding.tilPassword.setError("Completa correo y contraseña");
+        if (usuario.isEmpty() || password.isEmpty()) {
+            binding.tilPassword.setError("Completa usuario y contraseña");
             return;
         }
 
         executor.execute(() -> {
-            User usuario = db.userDao().login(correo, password);
+            User usuarioLogueado = db.userDao().login(usuario, password);
 
-            if (usuario != null) {
-                Log.d("LoginActivity", "Usuario logueado con rol: " + usuario.getRol());
-                final User usuarioFinal = usuario;
+            if (usuarioLogueado != null) {
+                Log.d("LoginActivity", "Usuario logueado con rol: " + usuarioLogueado.getRol());
+                final User usuarioFinal = usuarioLogueado;
                 new Thread(() -> EmailSender.enviar(
                         usuarioFinal.getCorreo(),
                         "Inicio de sesión detectado",
@@ -68,14 +67,14 @@ public class LoginActivity extends AppCompatActivity {
             }
 
             runOnUiThread(() -> {
-                if (usuario == null) {
-                    binding.tilPassword.setError("Correo o contraseña incorrectos");
+                if (usuarioLogueado == null) {
+                    binding.tilPassword.setError("Usuario o contraseña incorrectos");
                 } else {
                     Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-                    intent.putExtra("usuarioId", usuario.getId());
-                    intent.putExtra("nombre", usuario.getNombre());
-                    intent.putExtra("correo", usuario.getCorreo());
-                    intent.putExtra("rol", usuario.getRol());
+                    intent.putExtra("usuarioId", usuarioLogueado.getId());
+                    intent.putExtra("nombre", usuarioLogueado.getNombre());
+                    intent.putExtra("correo", usuarioLogueado.getCorreo());
+                    intent.putExtra("rol", usuarioLogueado.getRol());
                     startActivity(intent);
                     finish();
                 }

@@ -81,18 +81,20 @@ public class ForgotPasswordActivity extends AppCompatActivity {
                             "Tu contraseña de la plataforma académica se actualizó correctamente."
             )).start();
 
-            runOnUiThread(() -> mostrarConfirmacion(correo));
+            String usuarioParaPrellenar = existente.getUsuario();
+
+            runOnUiThread(() -> mostrarConfirmacion(usuarioParaPrellenar));
         });
     }
 
-    private void mostrarConfirmacion(String correo) {
+    private void mostrarConfirmacion(String usuario) {
         new AlertDialog.Builder(this)
-                .setTitle("Contraseña actualizada ✅")
+                .setTitle("Contraseña actualizada")
                 .setMessage("Tu contraseña se restableció correctamente. Ya puedes iniciar sesión con la nueva.")
                 .setCancelable(false)
                 .setPositiveButton("Ir a iniciar sesión", (dialog, which) -> {
                     Intent intent = new Intent(this, LoginActivity.class);
-                    intent.putExtra("correo_prellenado", correo);
+                    intent.putExtra("usuario_prellenado", usuario);
                     startActivity(intent);
                     finish();
                 })

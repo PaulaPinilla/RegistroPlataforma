@@ -14,27 +14,12 @@
         android:padding="8dp" />
 
     <TextView
-        android:id="@+id/tvTitulo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:text="Todos los cursos"
         android:textSize="22sp"
         android:textStyle="bold" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnForos"
-        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:text="Foros del curso" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnAgregarUnidad"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="+ Agregar unidad" />
 
     <TextView
         android:id="@+id/tvVacio"
@@ -42,11 +27,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:gravity="center"
-        android:text="Aún no hay unidades en este curso."
+        android:text="Todavía no se ha creado ningún curso."
         android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvUnidades"
+        android:id="@+id/rvCursos"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"

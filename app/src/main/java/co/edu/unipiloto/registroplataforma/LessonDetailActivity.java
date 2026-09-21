@@ -4,6 +4,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -55,31 +56,34 @@ public class LessonDetailActivity extends AppCompatActivity {
                 }
                 leccionActual = leccion;
                 binding.tvTituloLeccion.setText(leccion.getTitulo());
-                binding.tvTipoLeccion.setText(tipoLegible(leccion.getTipo()));
+                binding.tvTipoLeccion.setText(Lesson.TIPO_VIDEO.equals(leccion.getTipo()) ? "Video" : "Documento");
+
+                boolean tieneTexto = leccion.getContenidoTexto() != null && !leccion.getContenidoTexto().isEmpty();
+                boolean tieneArchivo = leccion.getUrlMaterial() != null && !leccion.getUrlMaterial().isEmpty();
+
+                binding.tvContenidoTexto.setVisibility(tieneTexto ? View.VISIBLE : View.GONE);
+                if (tieneTexto) binding.tvContenidoTexto.setText(leccion.getContenidoTexto());
+
+                binding.btnAbrirMaterial.setVisibility(tieneArchivo ? View.VISIBLE : View.GONE);
 
                 if (completada) {
                     binding.btnMarcarCompletada.setEnabled(false);
-                    binding.btnMarcarCompletada.setText("Lección completada ✅");
+                    binding.btnMarcarCompletada.setText("Lección completada ");
                 }
             });
         });
     }
 
-    private String tipoLegible(String tipo) {
-        if (Lesson.TIPO_VIDEO.equals(tipo)) return "🎥 Video";
-        if (Lesson.TIPO_DOCUMENTO.equals(tipo)) return "📄 Documento";
-        return "🔗 Material";
-    }
-
     private void abrirMaterial() {
-        if (leccionActual == null) return;
+        if (leccionActual == null || leccionActual.getUrlMaterial() == null) return;
         try {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(leccionActual.getUrlMaterial()));
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             startActivity(intent);
         } catch (ActivityNotFoundException e) {
             new AlertDialog.Builder(this)
                     .setTitle("No se pudo abrir")
-                    .setMessage("El enlace no es válido: " + leccionActual.getUrlMaterial())
+                    .setMessage("No hay ninguna app en este dispositivo que pueda abrir este material.")
                     .setPositiveButton("Aceptar", null)
                     .show();
         }
@@ -92,7 +96,7 @@ public class LessonDetailActivity extends AppCompatActivity {
             if (!yaCompletada) {
                 db.lessonProgressDao().insertar(new LessonProgress(leccionId, estudianteId, System.currentTimeMillis()));
             }
-            runOnUiThread(() -> binding.btnMarcarCompletada.setText("Lección completada ✅"));
+            runOnUiThread(() -> binding.btnMarcarCompletada.setText("Lección completada "));
         });
     }
 }

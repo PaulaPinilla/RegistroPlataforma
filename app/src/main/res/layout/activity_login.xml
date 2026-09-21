@@ -19,17 +19,17 @@
             android:textStyle="bold" />
 
         <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilCorreo"
+            android:id="@+id/tilUsuario"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:hint="Correo electrónico">
+            android:hint="Usuario">
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etCorreo"
+                android:id="@+id/etUsuario"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textEmailAddress" />
+                android:inputType="text" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -62,13 +62,13 @@
             android:layout_marginTop="20dp"
             android:text="Iniciar sesión" />
 
-        <TextView
-            android:id="@+id/tvIrRegistro"
-            android:layout_width="wrap_content"
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnIrRegistro"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="18dp"
-            android:text="¿No tienes cuenta? Regístrate" />
+            android:layout_marginTop="12dp"
+            android:text="Registrarme" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

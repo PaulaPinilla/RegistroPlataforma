@@ -26,11 +26,26 @@ public interface CourseDao {
     @Query("SELECT * FROM cursos WHERE profesorId = :profesorId ORDER BY id DESC")
     List<Course> listarPorProfesor(int profesorId);
 
-    @Query("SELECT * FROM cursos WHERE id NOT IN " +
+    @Query("SELECT * FROM cursos WHERE estado = 'APROBADO' AND id NOT IN " +
             "(SELECT cursoId FROM inscripciones WHERE estudianteId = :estudianteId) " +
             "ORDER BY id DESC")
     List<Course> listarDisponiblesParaEstudiante(int estudianteId);
 
     @Query("SELECT COUNT(*) FROM inscripciones WHERE cursoId = :cursoId")
     int contarInscritos(int cursoId);
+
+    @Query("SELECT * FROM cursos WHERE estado = 'PENDIENTE' ORDER BY id DESC")
+    List<Course> listarPendientes();
+
+    @Query("SELECT * FROM cursos ORDER BY id DESC")
+    List<Course> listarTodos();
+
+    @Query("UPDATE cursos SET estado = :estado WHERE id = :cursoId")
+    void actualizarEstado(int cursoId, String estado);
+
+    @Query("SELECT COUNT(*) FROM cursos")
+    int contarCursos();
+
+    @Query("SELECT COUNT(*) FROM cursos WHERE estado = :estado")
+    int contarCursosPorEstado(String estado);
 }

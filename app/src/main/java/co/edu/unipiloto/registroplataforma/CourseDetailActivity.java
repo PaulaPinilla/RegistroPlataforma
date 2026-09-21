@@ -57,7 +57,7 @@ public class CourseDetailActivity extends AppCompatActivity {
 
                 if (yaInscrito) {
                     binding.btnInscribirme.setEnabled(false);
-                    binding.btnInscribirme.setText("Ya estás inscrito ✅");
+                    binding.btnInscribirme.setText("Ya estás inscrito");
                 }
             });
         });

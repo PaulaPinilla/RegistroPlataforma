@@ -46,8 +46,8 @@ public class UnitListActivity extends AppCompatActivity {
         binding.tvTitulo.setText(cursoTitulo != null ? cursoTitulo : "Unidades del curso");
         binding.btnVolver.setOnClickListener(v -> finish());
 
-        binding.btnActividades.setOnClickListener(v -> {
-            Intent intent = new Intent(this, AssignmentListActivity.class);
+        binding.btnForos.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ForumListActivity.class);
             intent.putExtra("cursoId", cursoId);
             if (esProfesor) {
                 intent.putExtra("profesorId", profesorId);
