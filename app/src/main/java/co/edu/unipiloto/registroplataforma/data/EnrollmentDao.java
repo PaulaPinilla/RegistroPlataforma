@@ -20,7 +20,4 @@ public interface EnrollmentDao {
             "WHERE inscripciones.estudianteId = :estudianteId " +
             "ORDER BY inscripciones.id DESC")
     List<Course> listarCursosInscritos(int estudianteId);
-
-    @Query("SELECT COUNT(*) FROM inscripciones")
-    int contarInscripciones();
 }

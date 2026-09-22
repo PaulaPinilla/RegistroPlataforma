@@ -8,7 +8,6 @@ public class User {
 
     public static final String ROL_ESTUDIANTE = "ESTUDIANTE";
     public static final String ROL_PROFESOR = "PROFESOR";
-    public static final String ROL_COORDINADOR = "COORDINADOR";
 
     public static final String GENERO_MASCULINO = "MASCULINO";
     public static final String GENERO_FEMENINO = "FEMENINO";
@@ -68,5 +67,4 @@ public class User {
     public String getGenero() { return genero; }
 
     public boolean esProfesor() { return ROL_PROFESOR.equals(rol); }
-    public boolean esCoordinador() { return ROL_COORDINADOR.equals(rol); }
 }

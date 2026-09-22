@@ -25,32 +25,9 @@ public class HomeActivity extends AppCompatActivity {
         if (nombre == null) nombre = "";
         if (rol == null) rol = User.ROL_ESTUDIANTE;
 
-        binding.tvBienvenida.setText("¡Hola, " + nombre + "! ");
+        binding.tvBienvenida.setText("¡Hola, " + nombre + "! 👋");
 
         boolean esProfesor = User.ROL_PROFESOR.equals(rol);
-        boolean esCoordinador = User.ROL_COORDINADOR.equals(rol);
-
-        if (esCoordinador) {
-            binding.tvRol.setText("Rol: Coordinador");
-            binding.btnMisCursosProfesor.setVisibility(View.GONE);
-            binding.btnCursosDisponibles.setVisibility(View.GONE);
-            binding.btnMisCursosEstudiante.setVisibility(View.GONE);
-
-            binding.btnCursosPendientes.setVisibility(View.VISIBLE);
-            binding.btnTodosCursos.setVisibility(View.VISIBLE);
-            binding.btnEstadisticas.setVisibility(View.VISIBLE);
-            binding.btnAdministrarUsuarios.setVisibility(View.VISIBLE);
-
-            binding.btnCursosPendientes.setOnClickListener(v ->
-                    startActivity(new Intent(this, PendingCoursesActivity.class)));
-            binding.btnTodosCursos.setOnClickListener(v ->
-                    startActivity(new Intent(this, AllCoursesActivity.class)));
-            binding.btnEstadisticas.setOnClickListener(v ->
-                    startActivity(new Intent(this, StatsActivity.class)));
-            binding.btnAdministrarUsuarios.setOnClickListener(v ->
-                    startActivity(new Intent(this, UserManagementActivity.class)));
-            return;
-        }
 
         binding.tvRol.setText(esProfesor ? "Rol: Profesor" : "Rol: Estudiante");
 

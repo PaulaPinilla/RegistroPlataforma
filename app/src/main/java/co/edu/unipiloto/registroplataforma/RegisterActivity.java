@@ -45,7 +45,7 @@ public class RegisterActivity extends AppCompatActivity {
     private FusedLocationProviderClient clienteUbicacion;
     private ActivityResultLauncher<String> solicitarPermisoUbicacion;
 
-    private static final String[] ROLES = {"Estudiante", "Profesor", "Coordinador"};
+    private static final String[] ROLES = {"Estudiante", "Profesor"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,7 +110,7 @@ public class RegisterActivity extends AppCompatActivity {
                 longitudSeleccionada = location.getLongitude();
                 binding.etLatitud.setText(String.valueOf(latitudSeleccionada));
                 binding.etLongitud.setText(String.valueOf(longitudSeleccionada));
-                Toast.makeText(this, "Ubicación obtenida ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Ubicación obtenida ✅", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "No se pudo obtener la ubicación. Activa el GPS del emulador (Extended Controls > Location).", Toast.LENGTH_LONG).show();
             }
@@ -142,11 +142,8 @@ public class RegisterActivity extends AppCompatActivity {
         String password = binding.etPassword.getText().toString();
         String passwordConfirm = binding.etPasswordConfirm.getText().toString();
 
-        String rol;
         int posicionRol = binding.spRol.getSelectedItemPosition();
-        if (posicionRol == 1) rol = User.ROL_PROFESOR;
-        else if (posicionRol == 2) rol = User.ROL_COORDINADOR;
-        else rol = User.ROL_ESTUDIANTE;
+        String rol = (posicionRol == 1) ? User.ROL_PROFESOR : User.ROL_ESTUDIANTE;
 
         String genero;
         int idGenero = binding.rgGenero.getCheckedRadioButtonId();
@@ -224,7 +221,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void mostrarConfirmacion(String usuario) {
         new AlertDialog.Builder(this)
-                .setTitle("¡Registro exitoso!")
+                .setTitle("¡Registro exitoso! 🎉")
                 .setMessage("Tu cuenta se creó correctamente. Ahora puedes iniciar sesión.")
                 .setCancelable(false)
                 .setPositiveButton("Ir a iniciar sesión", (dialog, which) -> {

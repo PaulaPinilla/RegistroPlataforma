@@ -10,7 +10,7 @@ import androidx.room.RoomDatabase;
         entities = {User.class, Course.class, Enrollment.class, Unit.class, Lesson.class,
                 LessonProgress.class, Assignment.class, Submission.class, Question.class,
                 QuizResult.class, Forum.class, ForumPost.class},
-        version = 13,
+        version = 14,
         exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {

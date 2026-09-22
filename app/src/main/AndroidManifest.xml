@@ -38,10 +38,6 @@
         <activity android:name=".AssignmentFormActivity" android:exported="false" />
         <activity android:name=".AssignmentDetailActivity" android:exported="false" />
         <activity android:name=".SubmissionListActivity" android:exported="false" />
-        <activity android:name=".PendingCoursesActivity" android:exported="false" />
-        <activity android:name=".AllCoursesActivity" android:exported="false" />
-        <activity android:name=".StatsActivity" android:exported="false" />
-        <activity android:name=".UserManagementActivity" android:exported="false" />
         <activity android:name=".QuestionListActivity" android:exported="false" />
         <activity android:name=".QuizAnswerActivity" android:exported="false" />
         <activity android:name=".QuizResultListActivity" android:exported="false" />
