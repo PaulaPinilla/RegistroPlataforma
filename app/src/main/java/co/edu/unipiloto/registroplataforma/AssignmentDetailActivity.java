@@ -29,7 +29,7 @@ public class AssignmentDetailActivity extends AppCompatActivity {
     private ActivityAssignmentDetailBinding binding;
     private AppDatabase db;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private final SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+    private final SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
 
     private int actividadId;
     private int estudianteId;
@@ -146,7 +146,7 @@ public class AssignmentDetailActivity extends AppCompatActivity {
             if (entregaActual.esTexto()) {
                 texto.append("Respuesta entregada (").append(formatoFecha.format(entregaActual.getFechaEntrega())).append(")");
             } else {
-                texto.append(" Entregado: ").append(entregaActual.getNombreArchivo())
+                texto.append("Entregado: ").append(entregaActual.getNombreArchivo())
                         .append(" (").append(formatoFecha.format(entregaActual.getFechaEntrega())).append(")");
             }
 
@@ -242,7 +242,7 @@ public class AssignmentDetailActivity extends AppCompatActivity {
             entrega.setId((int) idGenerado);
 
             runOnUiThread(() -> new AlertDialog.Builder(this)
-                    .setTitle("¡Entrega exitosa! ")
+                    .setTitle("¡Entrega exitosa!")
                     .setMessage("Tu entrega se envió correctamente.")
                     .setCancelable(false)
                     .setPositiveButton("Aceptar", (d, w) -> {

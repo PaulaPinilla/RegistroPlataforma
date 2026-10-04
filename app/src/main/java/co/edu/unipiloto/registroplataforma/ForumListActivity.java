@@ -2,9 +2,7 @@ package co.edu.unipiloto.registroplataforma;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.EditText;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -43,7 +41,18 @@ public class ForumListActivity extends AppCompatActivity {
 
         binding.btnVolver.setOnClickListener(v -> finish());
         binding.btnCrearForo.setVisibility(esProfesor ? android.view.View.VISIBLE : android.view.View.GONE);
-        binding.btnCrearForo.setOnClickListener(v -> mostrarDialogoNuevoForo());
+        binding.btnCrearForo.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ForumFormActivity.class);
+            intent.putExtra("cursoId", cursoId);
+            startActivity(intent);
+        });
+
+        binding.btnReporte.setVisibility(esProfesor ? android.view.View.VISIBLE : android.view.View.GONE);
+        binding.btnReporte.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ForumReportActivity.class);
+            intent.putExtra("cursoId", cursoId);
+            startActivity(intent);
+        });
 
         adapter = new SimpleListAdapter(item -> {
             Intent intent = new Intent(this, ForumDetailActivity.class);
@@ -61,33 +70,21 @@ public class ForumListActivity extends AppCompatActivity {
         cargarForos();
     }
 
-    private void mostrarDialogoNuevoForo() {
-        final EditText input = new EditText(this);
-        input.setHint("Tema del foro");
-
-        new AlertDialog.Builder(this)
-                .setTitle("Nuevo foro")
-                .setView(input)
-                .setNegativeButton("Cancelar", null)
-                .setPositiveButton("Crear", (dialog, which) -> {
-                    String tema = input.getText().toString().trim();
-                    if (tema.isEmpty()) return;
-                    executor.execute(() -> {
-                        db.forumDao().insertar(new Forum(cursoId, tema, "", System.currentTimeMillis()));
-                        runOnUiThread(this::cargarForos);
-                    });
-                })
-                .show();
-    }
-
     private void cargarForos() {
         executor.execute(() -> {
             List<Forum> foros = db.forumDao().listarPorCurso(cursoId);
             List<SimpleListAdapter.Item> items = new ArrayList<>();
             for (Forum f : foros) {
                 int cantidad = db.forumPostDao().contarPorForo(f.getId());
-                items.add(new SimpleListAdapter.Item(f.getId(), f.getTema(),
-                        cantidad + (cantidad == 1 ? " participación" : " participaciones"), false));
+                String estado;
+                if (!f.yaAbrio()) {
+                    estado = "Aún no abre";
+                } else if (f.yaCerro()) {
+                    estado = "Cerrado";
+                } else {
+                    estado = cantidad + (cantidad == 1 ? " participación" : " participaciones");
+                }
+                items.add(new SimpleListAdapter.Item(f.getId(), f.getTema(), estado, false));
             }
             runOnUiThread(() -> {
                 adapter.actualizarDatos(items);

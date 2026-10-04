@@ -28,6 +28,14 @@
         android:layout_marginTop="14dp"
         android:text="+ Crear foro" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnReporte"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="📊 Reporte de participación" />
+
     <TextView
         android:id="@+id/tvVacio"
         android:layout_width="match_parent"

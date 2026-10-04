@@ -9,8 +9,8 @@ import androidx.room.RoomDatabase;
 @Database(
         entities = {User.class, Course.class, Enrollment.class, Unit.class, Lesson.class,
                 LessonProgress.class, Assignment.class, Submission.class, Question.class,
-                QuizResult.class, Forum.class, ForumPost.class},
-        version = 14,
+                QuizResult.class, Forum.class, ForumPost.class, ForumGrade.class},
+        version = 19,
         exportSchema = false
 )
 public abstract class AppDatabase extends RoomDatabase {
@@ -27,6 +27,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract QuizResultDao quizResultDao();
     public abstract ForumDao forumDao();
     public abstract ForumPostDao forumPostDao();
+    public abstract ForumGradeDao forumGradeDao();
 
     private static volatile AppDatabase INSTANCE;
 

@@ -13,12 +13,16 @@ public class Forum {
     private String tema;
     private String descripcion;
     private long fechaCreacion;
+    private long fechaApertura;
+    private long fechaCierre;
 
-    public Forum(int cursoId, String tema, String descripcion, long fechaCreacion) {
+    public Forum(int cursoId, String tema, String descripcion, long fechaCreacion, long fechaApertura, long fechaCierre) {
         this.cursoId = cursoId;
         this.tema = tema;
         this.descripcion = descripcion;
         this.fechaCreacion = fechaCreacion;
+        this.fechaApertura = fechaApertura;
+        this.fechaCierre = fechaCierre;
     }
 
     public int getId() { return id; }
@@ -31,4 +35,12 @@ public class Forum {
     public String getDescripcion() { return descripcion; }
 
     public long getFechaCreacion() { return fechaCreacion; }
+
+    public long getFechaApertura() { return fechaApertura; }
+
+    public long getFechaCierre() { return fechaCierre; }
+
+    public boolean yaAbrio() { return fechaApertura <= 0 || System.currentTimeMillis() >= fechaApertura; }
+
+    public boolean yaCerro() { return fechaCierre > 0 && System.currentTimeMillis() > fechaCierre; }
 }

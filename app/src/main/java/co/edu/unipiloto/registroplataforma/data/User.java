@@ -20,25 +20,26 @@ public class User {
     private String usuario;
     private String correo;
     private String direccion;
-    private Double latitud;
-    private Double longitud;
     private String password;
     private String rol;
     private long fechaNacimiento;
     private String genero;
+    private String tipoDocumento;
+    private String numeroDocumento;
 
-    public User(String nombre, String usuario, String correo, String direccion, Double latitud, Double longitud,
-                String password, String rol, long fechaNacimiento, String genero) {
+    public User(String nombre, String usuario, String correo, String direccion,
+                String password, String rol, long fechaNacimiento, String genero,
+                String tipoDocumento, String numeroDocumento) {
         this.nombre = nombre;
         this.usuario = usuario;
         this.correo = correo;
         this.direccion = direccion;
-        this.latitud = latitud;
-        this.longitud = longitud;
         this.password = password;
         this.rol = rol;
         this.fechaNacimiento = fechaNacimiento;
         this.genero = genero;
+        this.tipoDocumento = tipoDocumento;
+        this.numeroDocumento = numeroDocumento;
     }
 
     public int getId() { return id; }
@@ -52,10 +53,6 @@ public class User {
 
     public String getDireccion() { return direccion; }
 
-    public Double getLatitud() { return latitud; }
-
-    public Double getLongitud() { return longitud; }
-
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
 
@@ -65,6 +62,10 @@ public class User {
     public long getFechaNacimiento() { return fechaNacimiento; }
 
     public String getGenero() { return genero; }
+
+    public String getTipoDocumento() { return tipoDocumento; }
+
+    public String getNumeroDocumento() { return numeroDocumento; }
 
     public boolean esProfesor() { return ROL_PROFESOR.equals(rol); }
 }

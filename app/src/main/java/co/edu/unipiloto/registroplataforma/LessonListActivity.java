@@ -25,7 +25,7 @@ public class LessonListActivity extends AppCompatActivity {
     private SimpleListAdapter adapterLecciones;
     private SimpleListAdapter adapterActividades;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private final SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+    private final SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
 
     private int unidadId;
     private String unidadTitulo;
@@ -121,7 +121,12 @@ public class LessonListActivity extends AppCompatActivity {
             for (Assignment a : actividades) {
                 String subtitulo = AssignmentListActivity.categoriaLegible(a.getCategoria())
                         + " — Entrega antes del " + formatoFecha.format(a.getFechaLimite());
-                boolean entregada = !esProfesor && db.submissionDao().obtenerEntrega(a.getId(), estudianteId) != null;
+                boolean entregada;
+                if (Assignment.TIPO_ENTREGA_PREGUNTAS.equals(a.getTipoEntrega())) {
+                    entregada = !esProfesor && db.quizResultDao().obtenerUltimoResultado(a.getId(), estudianteId) != null;
+                } else {
+                    entregada = !esProfesor && db.submissionDao().obtenerEntrega(a.getId(), estudianteId) != null;
+                }
                 items.add(new SimpleListAdapter.Item(a.getId(), a.getTitulo(), subtitulo, entregada));
             }
             runOnUiThread(() -> {

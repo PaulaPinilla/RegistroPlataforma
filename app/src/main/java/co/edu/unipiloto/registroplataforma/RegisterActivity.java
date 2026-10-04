@@ -1,23 +1,13 @@
 package co.edu.unipiloto.registroplataforma;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.widget.ArrayAdapter;
-import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
 
 import co.edu.unipiloto.registroplataforma.data.AppDatabase;
 import co.edu.unipiloto.registroplataforma.data.User;
@@ -39,13 +29,8 @@ public class RegisterActivity extends AppCompatActivity {
     private final Calendar fechaNacimientoSeleccionada = Calendar.getInstance();
     private boolean fechaSeleccionada = false;
 
-    private Double latitudSeleccionada;
-    private Double longitudSeleccionada;
-
-    private FusedLocationProviderClient clienteUbicacion;
-    private ActivityResultLauncher<String> solicitarPermisoUbicacion;
-
     private static final String[] ROLES = {"Estudiante", "Profesor"};
+    private static final String[] TIPOS_DOCUMENTO = {"Cédula de ciudadanía", "Tarjeta de identidad", "Cédula de extranjería", "Pasaporte"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,32 +39,16 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         db = AppDatabase.getInstance(this);
-        clienteUbicacion = LocationServices.getFusedLocationProviderClient(this);
-
-        solicitarPermisoUbicacion = registerForActivityResult(
-                new ActivityResultContracts.RequestPermission(),
-                concedido -> {
-                    if (concedido) {
-                        obtenerUbicacionActual();
-                    } else {
-                        Toast.makeText(this, "Se necesita el permiso de ubicación para esta función", Toast.LENGTH_LONG).show();
-                    }
-                });
 
         ArrayAdapter<String> adaptadorRoles = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, ROLES);
         adaptadorRoles.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.spRol.setAdapter(adaptadorRoles);
 
-        binding.etFechaNacimiento.setOnClickListener(v -> mostrarSelectorFecha());
+        ArrayAdapter<String> adaptadorTiposDocumento = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, TIPOS_DOCUMENTO);
+        adaptadorTiposDocumento.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.spTipoDocumento.setAdapter(adaptadorTiposDocumento);
 
-        binding.btnUsarUbicacion.setOnClickListener(v -> {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
-                obtenerUbicacionActual();
-            } else {
-                solicitarPermisoUbicacion.launch(Manifest.permission.ACCESS_FINE_LOCATION);
-            }
-        });
+        binding.etFechaNacimiento.setOnClickListener(v -> mostrarSelectorFecha());
 
         binding.btnRegistrar.setOnClickListener(v -> intentarRegistrar());
         binding.tvIrLogin.setOnClickListener(v ->
@@ -96,25 +65,6 @@ public class RegisterActivity extends AppCompatActivity {
         }, hoy.get(Calendar.YEAR) - 18, hoy.get(Calendar.MONTH), hoy.get(Calendar.DAY_OF_MONTH));
         dialog.getDatePicker().setMaxDate(System.currentTimeMillis());
         dialog.show();
-    }
-
-    @SuppressLint("MissingPermission")
-    private void obtenerUbicacionActual() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        clienteUbicacion.getLastLocation().addOnSuccessListener(this, location -> {
-            if (location != null) {
-                latitudSeleccionada = location.getLatitude();
-                longitudSeleccionada = location.getLongitude();
-                binding.etLatitud.setText(String.valueOf(latitudSeleccionada));
-                binding.etLongitud.setText(String.valueOf(longitudSeleccionada));
-                Toast.makeText(this, "Ubicación obtenida ✅", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "No se pudo obtener la ubicación. Activa el GPS del emulador (Extended Controls > Location).", Toast.LENGTH_LONG).show();
-            }
-        });
     }
 
     private int calcularEdad(Calendar nacimiento) {
@@ -134,6 +84,7 @@ public class RegisterActivity extends AppCompatActivity {
         binding.tilPassword.setError(null);
         binding.tilPasswordConfirm.setError(null);
         binding.tilFechaNacimiento.setError(null);
+        binding.tilNumeroDocumento.setError(null);
 
         String nombre = binding.etNombre.getText().toString().trim();
         String usuario = binding.etUsuario.getText().toString().trim();
@@ -141,6 +92,8 @@ public class RegisterActivity extends AppCompatActivity {
         String direccion = binding.etDireccion.getText().toString().trim();
         String password = binding.etPassword.getText().toString();
         String passwordConfirm = binding.etPasswordConfirm.getText().toString();
+        String numeroDocumento = binding.etNumeroDocumento.getText().toString().trim();
+        String tipoDocumento = TIPOS_DOCUMENTO[binding.spTipoDocumento.getSelectedItemPosition()];
 
         int posicionRol = binding.spRol.getSelectedItemPosition();
         String rol = (posicionRol == 1) ? User.ROL_PROFESOR : User.ROL_ESTUDIANTE;
@@ -173,6 +126,11 @@ public class RegisterActivity extends AppCompatActivity {
 
         if (direccion.isEmpty()) {
             binding.tilDireccion.setError("Ingresa tu dirección");
+            valido = false;
+        }
+
+        if (numeroDocumento.isEmpty()) {
+            binding.tilNumeroDocumento.setError("Ingresa tu número de documento");
             valido = false;
         }
 
@@ -212,8 +170,8 @@ public class RegisterActivity extends AppCompatActivity {
             }
 
             db.userDao().insertar(new User(
-                    nombre, usuario, correo, direccion, latitudSeleccionada, longitudSeleccionada,
-                    password, rol, fechaNacimientoMillis, genero));
+                    nombre, usuario, correo, direccion,
+                    password, rol, fechaNacimientoMillis, genero, tipoDocumento, numeroDocumento));
 
             runOnUiThread(() -> mostrarConfirmacion(usuario));
         });
@@ -221,7 +179,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void mostrarConfirmacion(String usuario) {
         new AlertDialog.Builder(this)
-                .setTitle("¡Registro exitoso! 🎉")
+                .setTitle("¡Registro exitoso!")
                 .setMessage("Tu cuenta se creó correctamente. Ahora puedes iniciar sesión.")
                 .setCancelable(false)
                 .setPositiveButton("Ir a iniciar sesión", (dialog, which) -> {

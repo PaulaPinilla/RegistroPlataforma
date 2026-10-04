@@ -2,6 +2,7 @@ package co.edu.unipiloto.registroplataforma;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -91,11 +92,12 @@ public class QuestionListActivity extends AppCompatActivity {
         grupoTipo.setOrientation(RadioGroup.HORIZONTAL);
 
         RadioButton rbConOpciones = new RadioButton(this);
+        rbConOpciones.setId(View.generateViewId());
         rbConOpciones.setText("Con opciones");
-        rbConOpciones.setChecked(true);
         grupoTipo.addView(rbConOpciones);
 
         RadioButton rbSinOpciones = new RadioButton(this);
+        rbSinOpciones.setId(View.generateViewId());
         rbSinOpciones.setText("Respuesta libre");
         grupoTipo.addView(rbSinOpciones);
 
@@ -107,7 +109,9 @@ public class QuestionListActivity extends AppCompatActivity {
         layout.addView(inputOpciones);
 
         grupoTipo.setOnCheckedChangeListener((group, checkedId) ->
-                inputOpciones.setVisibility(rbConOpciones.isChecked() ? android.view.View.VISIBLE : android.view.View.GONE));
+                inputOpciones.setVisibility(checkedId == rbConOpciones.getId() ? View.VISIBLE : View.GONE));
+
+        grupoTipo.check(rbConOpciones.getId());
 
         new AlertDialog.Builder(this)
                 .setTitle("Nueva pregunta")
@@ -121,7 +125,7 @@ public class QuestionListActivity extends AppCompatActivity {
                     }
 
                     String opcionesFinal = null;
-                    if (rbConOpciones.isChecked()) {
+                    if (grupoTipo.getCheckedRadioButtonId() == rbConOpciones.getId()) {
                         String[] lineas = inputOpciones.getText().toString().trim().split("\n");
                         StringBuilder unidas = new StringBuilder();
                         int validas = 0;

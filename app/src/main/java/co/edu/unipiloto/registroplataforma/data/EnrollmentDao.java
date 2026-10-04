@@ -20,4 +20,10 @@ public interface EnrollmentDao {
             "WHERE inscripciones.estudianteId = :estudianteId " +
             "ORDER BY inscripciones.id DESC")
     List<Course> listarCursosInscritos(int estudianteId);
+
+    @Query("SELECT usuarios.* FROM usuarios " +
+            "INNER JOIN inscripciones ON usuarios.id = inscripciones.estudianteId " +
+            "WHERE inscripciones.cursoId = :cursoId " +
+            "ORDER BY usuarios.nombre ASC")
+    List<User> listarEstudiantesInscritos(int cursoId);
 }

@@ -1,5 +1,6 @@
 package co.edu.unipiloto.registroplataforma;
 
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
@@ -28,6 +29,11 @@ public class AssignmentFormActivity extends AppCompatActivity {
 
     private int unidadId;
 
+    private Integer horaInicioHora;
+    private Integer horaInicioMinuto;
+    private Integer horaLimiteHora;
+    private Integer horaLimiteMinuto;
+
     private static final String[] CATEGORIAS = {"Taller", "Parcial", "Quiz", "Foro", "Video", "Preguntas"};
     private static final String[] CATEGORIA_VALORES = {
             Assignment.CATEGORIA_TALLER, Assignment.CATEGORIA_PARCIAL, Assignment.CATEGORIA_QUIZ,
@@ -50,7 +56,26 @@ public class AssignmentFormActivity extends AppCompatActivity {
         binding.etIntentosPermitidos.setText("1");
 
         binding.btnVolver.setOnClickListener(v -> finish());
+        binding.etHoraInicio.setOnClickListener(v -> mostrarSelectorHora(true));
+        binding.etHoraLimite.setOnClickListener(v -> mostrarSelectorHora(false));
         binding.btnGuardar.setOnClickListener(v -> guardar());
+    }
+
+    private void mostrarSelectorHora(boolean esInicio) {
+        Calendar ahora = Calendar.getInstance();
+        TimePickerDialog dialog = new TimePickerDialog(this, (view, hourOfDay, minute) -> {
+            String horaTexto = String.format(Locale.getDefault(), "%02d:%02d", hourOfDay, minute);
+            if (esInicio) {
+                horaInicioHora = hourOfDay;
+                horaInicioMinuto = minute;
+                binding.etHoraInicio.setText(horaTexto);
+            } else {
+                horaLimiteHora = hourOfDay;
+                horaLimiteMinuto = minute;
+                binding.etHoraLimite.setText(horaTexto);
+            }
+        }, ahora.get(Calendar.HOUR_OF_DAY), ahora.get(Calendar.MINUTE), true);
+        dialog.show();
     }
 
     private void guardar() {
@@ -112,8 +137,13 @@ public class AssignmentFormActivity extends AppCompatActivity {
                 Date fecha = formato.parse(fechaInicioTexto);
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(fecha);
-                cal.set(Calendar.HOUR_OF_DAY, 0);
-                cal.set(Calendar.MINUTE, 0);
+                if (horaInicioHora != null) {
+                    cal.set(Calendar.HOUR_OF_DAY, horaInicioHora);
+                    cal.set(Calendar.MINUTE, horaInicioMinuto);
+                } else {
+                    cal.set(Calendar.HOUR_OF_DAY, 0);
+                    cal.set(Calendar.MINUTE, 0);
+                }
                 cal.set(Calendar.SECOND, 0);
                 cal.set(Calendar.MILLISECOND, 0);
                 fechaInicio = cal.getTimeInMillis();
@@ -129,9 +159,15 @@ public class AssignmentFormActivity extends AppCompatActivity {
             Date fecha = formato.parse(fechaLimiteTexto);
             Calendar cal = Calendar.getInstance();
             cal.setTime(fecha);
-            cal.set(Calendar.HOUR_OF_DAY, 23);
-            cal.set(Calendar.MINUTE, 59);
-            cal.set(Calendar.SECOND, 59);
+            if (horaLimiteHora != null) {
+                cal.set(Calendar.HOUR_OF_DAY, horaLimiteHora);
+                cal.set(Calendar.MINUTE, horaLimiteMinuto);
+                cal.set(Calendar.SECOND, 59);
+            } else {
+                cal.set(Calendar.HOUR_OF_DAY, 23);
+                cal.set(Calendar.MINUTE, 59);
+                cal.set(Calendar.SECOND, 59);
+            }
             cal.set(Calendar.MILLISECOND, 999);
             fechaLimite = cal.getTimeInMillis();
         } catch (ParseException | NullPointerException e) {
@@ -159,7 +195,7 @@ public class AssignmentFormActivity extends AppCompatActivity {
             runOnUiThread(() -> {
                 if (Assignment.TIPO_ENTREGA_PREGUNTAS.equals(tipoEntregaFinal)) {
                     new AlertDialog.Builder(this)
-                            .setTitle("Actividad creada")
+                            .setTitle("Actividad creada ")
                             .setMessage("Ahora agrega las preguntas de esta evaluación.")
                             .setCancelable(false)
                             .setPositiveButton("Agregar preguntas", (d, w) -> {
@@ -172,7 +208,7 @@ public class AssignmentFormActivity extends AppCompatActivity {
                             .show();
                 } else {
                     new AlertDialog.Builder(this)
-                            .setTitle("Actividad creada")
+                            .setTitle("Actividad creada ")
                             .setMessage("Ya está disponible para los estudiantes inscritos en esta unidad.")
                             .setCancelable(false)
                             .setPositiveButton("Aceptar", (d, w) -> finish())

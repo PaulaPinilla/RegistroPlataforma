@@ -15,6 +15,21 @@ public interface ForumPostDao {
     @Query("SELECT * FROM comentarios_foro WHERE foroId = :foroId ORDER BY fecha ASC")
     List<ForumPost> listarPorForo(int foroId);
 
+    @Query("SELECT * FROM comentarios_foro WHERE id = :id LIMIT 1")
+    ForumPost obtenerPorId(int id);
+
     @Query("SELECT COUNT(*) FROM comentarios_foro WHERE foroId = :foroId")
     int contarPorForo(int foroId);
+
+    @Query("SELECT autorId, COUNT(*) as cantidad FROM comentarios_foro " +
+            "WHERE foroId IN (SELECT id FROM foros WHERE cursoId = :cursoId) " +
+            "AND fecha BETWEEN :desde AND :hasta " +
+            "GROUP BY autorId")
+    List<ParticipacionEstudiante> contarComentariosPorEstudiante(int cursoId, long desde, long hasta);
+
+    @Query("SELECT autorId, COUNT(DISTINCT foroId) as cantidad FROM comentarios_foro " +
+            "WHERE foroId IN (SELECT id FROM foros WHERE cursoId = :cursoId) " +
+            "AND fecha BETWEEN :desde AND :hasta " +
+            "GROUP BY autorId")
+    List<ParticipacionEstudiante> contarForosParticipadosPorEstudiante(int cursoId, long desde, long hasta);
 }

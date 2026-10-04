@@ -34,7 +34,7 @@ public class QuizAnswerActivity extends AppCompatActivity {
     private ActivityQuizAnswerBinding binding;
     private AppDatabase db;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private final SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+    private final SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
 
     private int actividadId;
     private int estudianteId;
@@ -97,7 +97,7 @@ public class QuizAnswerActivity extends AppCompatActivity {
                 construirPreguntas(preguntas, respuestasPrevias);
 
                 if (resultado != null) {
-                    StringBuilder estado = new StringBuilder(" Última entrega: intento " + intentosUsados
+                    StringBuilder estado = new StringBuilder("Última entrega: intento " + intentosUsados
                             + " de " + actividad.getIntentosPermitidos()
                             + " (" + formatoFecha.format(resultado.getFechaEnvio()) + ")");
                     if (actividad.isMostrarCalificacion() && resultado.estaCalificada()) {

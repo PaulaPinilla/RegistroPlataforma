@@ -55,6 +55,7 @@ public class CourseFormActivity extends AppCompatActivity {
                 binding.etTituloCurso.setText(cursoExistente.getTitulo());
                 binding.etDescripcionCurso.setText(cursoExistente.getDescripcion());
                 binding.etContrasenaCurso.setText(cursoExistente.getContrasenaCurso());
+                binding.etSemestre.setText(cursoExistente.getSemestre());
             });
         });
     }
@@ -67,6 +68,7 @@ public class CourseFormActivity extends AppCompatActivity {
         String titulo = binding.etTituloCurso.getText().toString().trim();
         String descripcion = binding.etDescripcionCurso.getText().toString().trim();
         String contrasena = binding.etContrasenaCurso.getText().toString().trim();
+        String semestre = binding.etSemestre.getText().toString().trim();
 
         boolean valido = true;
 
@@ -94,9 +96,10 @@ public class CourseFormActivity extends AppCompatActivity {
                 cursoExistente.setTitulo(titulo);
                 cursoExistente.setDescripcion(descripcion);
                 cursoExistente.setContrasenaCurso(contrasena);
+                cursoExistente.setSemestre(semestre);
                 db.courseDao().actualizar(cursoExistente);
             } else {
-                db.courseDao().insertar(new Course(titulo, descripcion, profesorId, profesorNombre, contrasena));
+                db.courseDao().insertar(new Course(titulo, descripcion, profesorId, profesorNombre, contrasena, semestre));
             }
             runOnUiThread(() -> mostrarConfirmacion(esEdicion));
         });
@@ -104,7 +107,7 @@ public class CourseFormActivity extends AppCompatActivity {
 
     private void mostrarConfirmacion(boolean esEdicion) {
         new AlertDialog.Builder(this)
-                .setTitle(esEdicion ? "Curso actualizado ✅" : "Curso creado 🎉")
+                .setTitle(esEdicion ? "Curso actualizado" : "Curso creado")
                 .setMessage(esEdicion
                         ? "Los cambios se guardaron correctamente."
                         : "El curso ya está disponible para que los estudiantes se inscriban.")

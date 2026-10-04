@@ -14,13 +14,16 @@ public class Course {
     private int profesorId;
     private String profesorNombre;
     private String contrasenaCurso;
+    private String semestre;
 
-    public Course(String titulo, String descripcion, int profesorId, String profesorNombre, String contrasenaCurso) {
+    public Course(String titulo, String descripcion, int profesorId, String profesorNombre,
+                  String contrasenaCurso, String semestre) {
         this.titulo = titulo;
         this.descripcion = descripcion;
         this.profesorId = profesorId;
         this.profesorNombre = profesorNombre;
         this.contrasenaCurso = contrasenaCurso;
+        this.semestre = semestre;
     }
 
     public int getId() { return id; }
@@ -38,4 +41,7 @@ public class Course {
 
     public String getContrasenaCurso() { return contrasenaCurso; }
     public void setContrasenaCurso(String contrasenaCurso) { this.contrasenaCurso = contrasenaCurso; }
+
+    public String getSemestre() { return semestre; }
+    public void setSemestre(String semestre) { this.semestre = semestre; }
 }

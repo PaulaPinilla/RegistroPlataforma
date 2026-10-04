@@ -25,7 +25,7 @@ public class HomeActivity extends AppCompatActivity {
         if (nombre == null) nombre = "";
         if (rol == null) rol = User.ROL_ESTUDIANTE;
 
-        binding.tvBienvenida.setText("¡Hola, " + nombre + "! 👋");
+        binding.tvBienvenida.setText("¡Hola, " + nombre + "!");
 
         boolean esProfesor = User.ROL_PROFESOR.equals(rol);
 
@@ -34,6 +34,7 @@ public class HomeActivity extends AppCompatActivity {
         binding.btnMisCursosProfesor.setVisibility(esProfesor ? View.VISIBLE : View.GONE);
         binding.btnCursosDisponibles.setVisibility(esProfesor ? View.GONE : View.VISIBLE);
         binding.btnMisCursosEstudiante.setVisibility(esProfesor ? View.GONE : View.VISIBLE);
+        binding.btnMisCalificaciones.setVisibility(esProfesor ? View.GONE : View.VISIBLE);
 
         final int idFinal = usuarioId;
         final String nombreFinal = nombre;
@@ -53,6 +54,12 @@ public class HomeActivity extends AppCompatActivity {
 
         binding.btnMisCursosEstudiante.setOnClickListener(v -> {
             Intent intent = new Intent(this, MyCoursesActivity.class);
+            intent.putExtra("estudianteId", idFinal);
+            startActivity(intent);
+        });
+
+        binding.btnMisCalificaciones.setOnClickListener(v -> {
+            Intent intent = new Intent(this, GradesCourseListActivity.class);
             intent.putExtra("estudianteId", idFinal);
             startActivity(intent);
         });
