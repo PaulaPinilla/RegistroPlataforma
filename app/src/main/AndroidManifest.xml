@@ -101,11 +101,15 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
+            android:name=".GradeCertificateActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
             android:name=".ForumFormActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".data.ForumGradeListActivity"
+            android:name=".ForumGradeListActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
     </application>

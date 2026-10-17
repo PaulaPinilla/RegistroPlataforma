@@ -1,5 +1,6 @@
 package co.edu.unipiloto.registroplataforma.data;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -15,14 +16,21 @@ public class Forum {
     private long fechaCreacion;
     private long fechaApertura;
     private long fechaCierre;
+    private int corte;
 
-    public Forum(int cursoId, String tema, String descripcion, long fechaCreacion, long fechaApertura, long fechaCierre) {
+    // Porcentaje que vale este foro dentro de su corte (0 a 100)
+    @ColumnInfo(defaultValue = "0")
+    private double porcentaje;
+
+    public Forum(int cursoId, String tema, String descripcion, long fechaCreacion, long fechaApertura,
+                 long fechaCierre, int corte) {
         this.cursoId = cursoId;
         this.tema = tema;
         this.descripcion = descripcion;
         this.fechaCreacion = fechaCreacion;
         this.fechaApertura = fechaApertura;
         this.fechaCierre = fechaCierre;
+        this.corte = corte;
     }
 
     public int getId() { return id; }
@@ -39,6 +47,11 @@ public class Forum {
     public long getFechaApertura() { return fechaApertura; }
 
     public long getFechaCierre() { return fechaCierre; }
+
+    public int getCorte() { return corte; }
+
+    public double getPorcentaje() { return porcentaje; }
+    public void setPorcentaje(double porcentaje) { this.porcentaje = porcentaje; }
 
     public boolean yaAbrio() { return fechaApertura <= 0 || System.currentTimeMillis() >= fechaApertura; }
 

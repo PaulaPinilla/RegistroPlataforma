@@ -1,5 +1,6 @@
 package co.edu.unipiloto.registroplataforma;
 
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,17 +20,37 @@ public class SimpleListAdapter extends RecyclerView.Adapter<SimpleListAdapter.Vi
         public final String titulo;
         public final String subtitulo;
         public final boolean marcada;
+        public final boolean esEncabezado;
+        public final boolean mostrarAcciones;
 
         public Item(int id, String titulo, String subtitulo, boolean marcada) {
+            this(id, titulo, subtitulo, marcada, false);
+        }
+
+        public Item(int id, String titulo, String subtitulo, boolean marcada, boolean mostrarAcciones) {
             this.id = id;
             this.titulo = titulo;
             this.subtitulo = subtitulo;
             this.marcada = marcada;
+            this.esEncabezado = false;
+            this.mostrarAcciones = mostrarAcciones;
+        }
+
+        public Item(String tituloEncabezado) {
+            this.id = -1;
+            this.titulo = tituloEncabezado;
+            this.subtitulo = null;
+            this.marcada = false;
+            this.esEncabezado = true;
+            this.mostrarAcciones = false;
         }
     }
 
     public interface OnItemClickListener {
         void onClick(Item item);
+        default void onLongClick(Item item) { }
+        default void onEditar(Item item) { }
+        default void onEliminar(Item item) { }
     }
 
     private final List<Item> items = new ArrayList<>();
@@ -76,15 +97,39 @@ public class SimpleListAdapter extends RecyclerView.Adapter<SimpleListAdapter.Vi
         }
 
         void bind(Item item) {
-            binding.tvTitulo.setText(item.titulo);
-            if (item.subtitulo != null && !item.subtitulo.isEmpty()) {
-                binding.tvSubtitulo.setVisibility(View.VISIBLE);
-                binding.tvSubtitulo.setText(item.subtitulo);
-            } else {
+            if (item.esEncabezado) {
+                binding.tvTitulo.setText(item.titulo);
+                binding.tvTitulo.setTypeface(null, Typeface.BOLD);
+                binding.tvTitulo.setTextColor(0xFF1565C0);
                 binding.tvSubtitulo.setVisibility(View.GONE);
+                binding.tvEstado.setText("");
+                binding.layoutAcciones.setVisibility(View.GONE);
+                binding.getRoot().setOnClickListener(null);
+                binding.getRoot().setClickable(false);
+            } else {
+                binding.tvTitulo.setTypeface(null, Typeface.NORMAL);
+                binding.tvTitulo.setTextColor(0xFF000000);
+                binding.tvTitulo.setText(item.titulo);
+                if (item.subtitulo != null && !item.subtitulo.isEmpty()) {
+                    binding.tvSubtitulo.setVisibility(View.VISIBLE);
+                    binding.tvSubtitulo.setText(item.subtitulo);
+                } else {
+                    binding.tvSubtitulo.setVisibility(View.GONE);
+                }
+                binding.tvEstado.setText("");
+                binding.getRoot().setClickable(true);
+                binding.getRoot().setOnClickListener(v -> listener.onClick(item));
+
+                if (item.mostrarAcciones) {
+                    binding.layoutAcciones.setVisibility(View.VISIBLE);
+                    binding.btnEditar.setOnClickListener(v -> listener.onEditar(item));
+                    binding.btnEliminar.setOnClickListener(v -> listener.onEliminar(item));
+                } else {
+                    binding.layoutAcciones.setVisibility(View.GONE);
+                    binding.btnEditar.setOnClickListener(null);
+                    binding.btnEliminar.setOnClickListener(null);
+                }
             }
-            binding.tvEstado.setText(item.marcada ? "" : "");
-            binding.getRoot().setOnClickListener(v -> listener.onClick(item));
         }
     }
 }

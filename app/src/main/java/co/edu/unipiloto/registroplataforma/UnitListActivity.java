@@ -75,6 +75,7 @@ public class UnitListActivity extends AppCompatActivity {
         Intent intent = new Intent(this, LessonListActivity.class);
         intent.putExtra("unidadId", unidadId);
         intent.putExtra("unidadTitulo", unidadTitulo);
+        intent.putExtra("cursoId", cursoId);
         if (esProfesor) {
             intent.putExtra("profesorId", profesorId);
         } else {

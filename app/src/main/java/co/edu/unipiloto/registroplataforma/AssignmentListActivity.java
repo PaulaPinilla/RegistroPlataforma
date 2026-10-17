@@ -2,7 +2,9 @@ package co.edu.unipiloto.registroplataforma;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -50,21 +52,59 @@ public class AssignmentListActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        adapter = new SimpleListAdapter(item -> {
-            if (esProfesor) {
-                Intent intent = new Intent(this, SubmissionListActivity.class);
+        adapter = new SimpleListAdapter(new SimpleListAdapter.OnItemClickListener() {
+            @Override
+            public void onClick(SimpleListAdapter.Item item) {
+                if (esProfesor) {
+                    Intent intent = new Intent(AssignmentListActivity.this, SubmissionListActivity.class);
+                    intent.putExtra("actividadId", item.id);
+                    intent.putExtra("actividadTitulo", item.titulo);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(AssignmentListActivity.this, AssignmentDetailActivity.class);
+                    intent.putExtra("actividadId", item.id);
+                    intent.putExtra("estudianteId", estudianteId);
+                    startActivity(intent);
+                }
+            }
+
+            @Override
+            public void onEditar(SimpleListAdapter.Item item) {
+                Intent intent = new Intent(AssignmentListActivity.this, AssignmentFormActivity.class);
+                intent.putExtra("unidadId", unidadId);
                 intent.putExtra("actividadId", item.id);
-                intent.putExtra("actividadTitulo", item.titulo);
                 startActivity(intent);
-            } else {
-                Intent intent = new Intent(this, AssignmentDetailActivity.class);
-                intent.putExtra("actividadId", item.id);
-                intent.putExtra("estudianteId", estudianteId);
-                startActivity(intent);
+            }
+
+            @Override
+            public void onEliminar(SimpleListAdapter.Item item) {
+                confirmarEliminar(item);
             }
         });
         binding.rvActividades.setLayoutManager(new LinearLayoutManager(this));
         binding.rvActividades.setAdapter(adapter);
+    }
+
+    private void confirmarEliminar(SimpleListAdapter.Item item) {
+        new AlertDialog.Builder(this)
+                .setTitle("Eliminar actividad")
+                .setMessage("¿Seguro que quieres eliminar \"" + item.titulo + "\"? Esta acción no se puede deshacer.")
+                .setPositiveButton("Eliminar", (dialog, which) -> eliminarActividad(item.id))
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void eliminarActividad(int idActividad) {
+        executor.execute(() -> {
+            Assignment a = db.assignmentDao().obtenerPorId(idActividad);
+            if (a != null) {
+                db.assignmentDao().eliminar(a);
+            }
+            runOnUiThread(() -> {
+                Toast.makeText(this, "Actividad eliminada", Toast.LENGTH_SHORT).show();
+                cargarActividades();
+            });
+        });
     }
 
     @Override
@@ -80,7 +120,7 @@ public class AssignmentListActivity extends AppCompatActivity {
             for (Assignment a : actividades) {
                 String subtitulo = categoriaLegible(a.getCategoria()) + " — Entrega antes del " + formato.format(a.getFechaLimite());
                 boolean entregada = !esProfesor && db.submissionDao().obtenerEntrega(a.getId(), estudianteId) != null;
-                items.add(new SimpleListAdapter.Item(a.getId(), a.getTitulo(), subtitulo, entregada));
+                items.add(new SimpleListAdapter.Item(a.getId(), a.getTitulo(), subtitulo, entregada, esProfesor));
             }
             runOnUiThread(() -> {
                 adapter.actualizarDatos(items);
@@ -95,6 +135,6 @@ public class AssignmentListActivity extends AppCompatActivity {
         if (Assignment.CATEGORIA_FORO.equals(categoria)) return "Foro";
         if (Assignment.CATEGORIA_VIDEO.equals(categoria)) return "Video";
         if (Assignment.CATEGORIA_PREGUNTAS.equals(categoria)) return "Preguntas";
-        return "🛠 Taller";
+        return " Taller";
     }
 }

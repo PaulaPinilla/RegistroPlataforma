@@ -25,6 +25,38 @@
             android:layout_marginTop="6dp"
             android:textSize="15sp" />
 
+        <LinearLayout
+            android:id="@+id/panelAvisos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Avisos"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvSinAvisos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="No tienes avisos pendientes."
+                android:visibility="gone" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvAvisos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:nestedScrollingEnabled="false" />
+
+        </LinearLayout>
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnMisCursosProfesor"
             android:layout_width="match_parent"
@@ -53,7 +85,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
-            android:text="📊 Mis calificaciones" />
+            android:text="Mis calificaciones" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

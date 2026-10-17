@@ -3,6 +3,9 @@ package co.edu.unipiloto.registroplataforma;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,6 +36,8 @@ public class ForumFormActivity extends AppCompatActivity {
     private boolean cierreFechaSeleccionada = false;
     private boolean cierreHoraSeleccionada = false;
 
+    private static final String[] CORTES = {"Corte 1", "Corte 2", "Corte 3"};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +47,21 @@ public class ForumFormActivity extends AppCompatActivity {
         db = AppDatabase.getInstance(this);
         cursoId = getIntent().getIntExtra("cursoId", -1);
 
+        ArrayAdapter<String> adaptadorCortes = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, CORTES);
+        adaptadorCortes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.spCorte.setAdapter(adaptadorCortes);
+
+        // Cada vez que cambia el corte se recalcula cuánto porcentaje queda disponible
+        binding.spCorte.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                actualizarPorcentajeDisponible();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) { }
+        });
+
         binding.btnVolver.setOnClickListener(v -> finish());
 
         binding.etFechaApertura.setOnClickListener(v -> mostrarSelectorFecha(true));
@@ -50,6 +70,35 @@ public class ForumFormActivity extends AppCompatActivity {
         binding.etHoraCierre.setOnClickListener(v -> mostrarSelectorHora(false));
 
         binding.btnGuardar.setOnClickListener(v -> guardar());
+    }
+
+    private String formatearPorcentaje(double valor) {
+        if (Math.abs(valor - Math.rint(valor)) < 0.0001) {
+            return String.valueOf((long) Math.rint(valor));
+        }
+        return String.format(Locale.US, "%.1f", valor);
+    }
+
+    /** Porcentaje ya usado por actividades y foros en un corte del curso. Se llama en segundo plano. */
+    private double porcentajeUsadoEnCorte(int corte) {
+        if (cursoId == -1) return 0;
+        return db.assignmentDao().sumarPorcentajeActividadesCorte(cursoId, corte, -1)
+                + db.assignmentDao().sumarPorcentajeForosCorte(cursoId, corte);
+    }
+
+    private void actualizarPorcentajeDisponible() {
+        if (cursoId == -1) {
+            binding.tvPorcentajeDisponible.setText("");
+            return;
+        }
+        final int corte = binding.spCorte.getSelectedItemPosition() + 1;
+        executor.execute(() -> {
+            double usado = porcentajeUsadoEnCorte(corte);
+            double disponible = Math.max(0, 100 - usado);
+            String texto = "Corte " + corte + ": ya asignado " + formatearPorcentaje(usado)
+                    + "%, disponible " + formatearPorcentaje(disponible) + "%";
+            runOnUiThread(() -> binding.tvPorcentajeDisponible.setText(texto));
+        });
     }
 
     private void mostrarSelectorFecha(boolean esApertura) {
@@ -89,12 +138,36 @@ public class ForumFormActivity extends AppCompatActivity {
     private void guardar() {
         binding.tilTema.setError(null);
         binding.tilFechaCierre.setError(null);
+        binding.tilPorcentaje.setError(null);
 
         String tema = binding.etTema.getText().toString().trim();
+        String porcentajeTexto = binding.etPorcentaje.getText().toString().trim().replace(',', '.');
+
+        boolean valido = true;
+
         if (tema.isEmpty()) {
             binding.tilTema.setError("Escribe el tema del foro");
-            return;
+            valido = false;
         }
+
+        double porcentaje = 0;
+        if (porcentajeTexto.isEmpty()) {
+            binding.tilPorcentaje.setError("Indica cuánto vale este foro dentro del corte");
+            valido = false;
+        } else {
+            try {
+                porcentaje = Double.parseDouble(porcentajeTexto);
+                if (porcentaje <= 0 || porcentaje > 100) {
+                    binding.tilPorcentaje.setError("Debe ser mayor que 0 y máximo 100");
+                    valido = false;
+                }
+            } catch (NumberFormatException e) {
+                binding.tilPorcentaje.setError("Escribe un número válido");
+                valido = false;
+            }
+        }
+
+        int corte = binding.spCorte.getSelectedItemPosition() + 1;
 
         long apertura = 0;
         if (aperturaFechaSeleccionada) {
@@ -120,16 +193,33 @@ public class ForumFormActivity extends AppCompatActivity {
 
         if (apertura > 0 && cierre > 0 && apertura > cierre) {
             binding.tilFechaCierre.setError("Debe ser después de la apertura");
-            return;
+            valido = false;
         }
+
+        if (!valido) return;
 
         long aperturaFinal = apertura;
         long cierreFinal = cierre;
+        int corteFinal = corte;
+        double porcentajeFinal = porcentaje;
 
         executor.execute(() -> {
-            db.forumDao().insertar(new Forum(cursoId, tema, "", System.currentTimeMillis(), aperturaFinal, cierreFinal));
+            // Validación del porcentaje: el corte no puede pasar de 100%
+            double usado = porcentajeUsadoEnCorte(corteFinal);
+            double disponible = Math.max(0, 100 - usado);
+            if (porcentajeFinal > disponible + 0.0001) {
+                runOnUiThread(() -> binding.tilPorcentaje.setError("En el Corte " + corteFinal
+                        + " solo quedan " + formatearPorcentaje(disponible) + "% disponibles"));
+                return;
+            }
+
+            Forum nuevo = new Forum(cursoId, tema, "", System.currentTimeMillis(), aperturaFinal,
+                    cierreFinal, corteFinal);
+            nuevo.setPorcentaje(porcentajeFinal);
+            db.forumDao().insertar(nuevo);
+
             runOnUiThread(() -> new AlertDialog.Builder(this)
-                    .setTitle("Foro creado 🎉")
+                    .setTitle("Foro creado")
                     .setCancelable(false)
                     .setPositiveButton("Aceptar", (d, w) -> finish())
                     .show());

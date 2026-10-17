@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -70,6 +71,13 @@ public class ForumListActivity extends AppCompatActivity {
         cargarForos();
     }
 
+    private String formatearPorcentaje(double valor) {
+        if (Math.abs(valor - Math.rint(valor)) < 0.0001) {
+            return String.valueOf((long) Math.rint(valor));
+        }
+        return String.format(Locale.US, "%.1f", valor);
+    }
+
     private void cargarForos() {
         executor.execute(() -> {
             List<Forum> foros = db.forumDao().listarPorCurso(cursoId);
@@ -84,7 +92,10 @@ public class ForumListActivity extends AppCompatActivity {
                 } else {
                     estado = cantidad + (cantidad == 1 ? " participación" : " participaciones");
                 }
-                items.add(new SimpleListAdapter.Item(f.getId(), f.getTema(), estado, false));
+                String valor = f.getPorcentaje() > 0
+                        ? "Corte " + f.getCorte() + " - vale " + formatearPorcentaje(f.getPorcentaje()) + "%"
+                        : "Corte " + f.getCorte() + " - sin porcentaje definido";
+                items.add(new SimpleListAdapter.Item(f.getId(), f.getTema(), valor + " - " + estado, false));
             }
             runOnUiThread(() -> {
                 adapter.actualizarDatos(items);

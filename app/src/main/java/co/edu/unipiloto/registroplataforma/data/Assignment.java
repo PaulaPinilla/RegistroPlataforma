@@ -1,5 +1,6 @@
 package co.edu.unipiloto.registroplataforma.data;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -29,9 +30,19 @@ public class Assignment {
     private String categoria;
     private boolean mostrarCalificacion;
     private int intentosPermitidos;
+    private int corte;
+
+    // Porcentaje que vale esta actividad dentro de su corte (0 a 100)
+    @ColumnInfo(defaultValue = "0")
+    private double porcentaje;
+
+    // Momento en que el profesor creó la actividad (0 en actividades anteriores a esta función)
+    @ColumnInfo(defaultValue = "0")
+    private long fechaCreacion;
 
     public Assignment(int unidadId, String titulo, String instrucciones, long fechaInicio, long fechaLimite,
-                      String tipoEntrega, String categoria, boolean mostrarCalificacion, int intentosPermitidos) {
+                      String tipoEntrega, String categoria, boolean mostrarCalificacion, int intentosPermitidos,
+                      int corte) {
         this.unidadId = unidadId;
         this.titulo = titulo;
         this.instrucciones = instrucciones;
@@ -41,6 +52,7 @@ public class Assignment {
         this.categoria = categoria;
         this.mostrarCalificacion = mostrarCalificacion;
         this.intentosPermitidos = intentosPermitidos;
+        this.corte = corte;
     }
 
     public int getId() { return id; }
@@ -63,6 +75,14 @@ public class Assignment {
     public boolean isMostrarCalificacion() { return mostrarCalificacion; }
 
     public int getIntentosPermitidos() { return intentosPermitidos; }
+
+    public int getCorte() { return corte; }
+
+    public double getPorcentaje() { return porcentaje; }
+    public void setPorcentaje(double porcentaje) { this.porcentaje = porcentaje; }
+
+    public long getFechaCreacion() { return fechaCreacion; }
+    public void setFechaCreacion(long fechaCreacion) { this.fechaCreacion = fechaCreacion; }
 
     public boolean yaComenzo() {
         return fechaInicio <= 0 || System.currentTimeMillis() >= fechaInicio;

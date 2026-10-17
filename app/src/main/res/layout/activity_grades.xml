@@ -30,11 +30,27 @@
         android:textStyle="bold" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnObtenerCertificado"
+        android:id="@+id/btnCertificadoNotas"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="14dp"
-        android:text="🎓 Obtener certificado"
+        android:enabled="false"
+        android:text="Ver certificado de notas" />
+
+    <TextView
+        android:id="@+id/tvDisponibilidadCertificado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:textSize="13sp"
+        android:visibility="gone" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnObtenerCertificado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Obtener certificado de finalización"
         android:visibility="gone" />
 
     <TextView
