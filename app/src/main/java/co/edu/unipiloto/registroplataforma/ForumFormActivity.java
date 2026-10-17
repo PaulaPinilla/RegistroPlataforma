@@ -6,17 +6,20 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import co.edu.unipiloto.registroplataforma.data.AppDatabase;
+import co.edu.unipiloto.registroplataforma.data.Course;
 import co.edu.unipiloto.registroplataforma.data.Forum;
 import co.edu.unipiloto.registroplataforma.databinding.ActivityForumFormBinding;
 
@@ -28,6 +31,15 @@ public class ForumFormActivity extends AppCompatActivity {
     private final SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
     private int cursoId;
+    private int foroId;
+    private boolean modoEdicion;
+
+    // Foro que se está editando (se carga al abrir la pantalla en modo edición)
+    private volatile Forum foroExistente;
+
+    // Curso al que pertenece el foro
+    private volatile Course curso;
+    private volatile boolean cursoCargado = false;
 
     private final Calendar fechaApertura = Calendar.getInstance();
     private final Calendar fechaCierre = Calendar.getInstance();
@@ -46,6 +58,8 @@ public class ForumFormActivity extends AppCompatActivity {
 
         db = AppDatabase.getInstance(this);
         cursoId = getIntent().getIntExtra("cursoId", -1);
+        foroId = getIntent().getIntExtra("foroId", -1);
+        modoEdicion = foroId != -1;
 
         ArrayAdapter<String> adaptadorCortes = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, CORTES);
         adaptadorCortes.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -70,6 +84,13 @@ public class ForumFormActivity extends AppCompatActivity {
         binding.etHoraCierre.setOnClickListener(v -> mostrarSelectorHora(false));
 
         binding.btnGuardar.setOnClickListener(v -> guardar());
+
+        if (modoEdicion) {
+            binding.tvTitulo.setText("Editar foro");
+            binding.btnGuardar.setText("Guardar cambios");
+            cargarForoExistente();
+        }
+        cargarCurso();
     }
 
     private String formatearPorcentaje(double valor) {
@@ -82,8 +103,9 @@ public class ForumFormActivity extends AppCompatActivity {
     /** Porcentaje ya usado por actividades y foros en un corte del curso. Se llama en segundo plano. */
     private double porcentajeUsadoEnCorte(int corte) {
         if (cursoId == -1) return 0;
+        int excluirForoId = modoEdicion ? foroId : -1;
         return db.assignmentDao().sumarPorcentajeActividadesCorte(cursoId, corte, -1)
-                + db.assignmentDao().sumarPorcentajeForosCorte(cursoId, corte);
+                + db.assignmentDao().sumarPorcentajeForosCorteExcluyendo(cursoId, corte, excluirForoId);
     }
 
     private void actualizarPorcentajeDisponible() {
@@ -98,6 +120,71 @@ public class ForumFormActivity extends AppCompatActivity {
             String texto = "Corte " + corte + ": ya asignado " + formatearPorcentaje(usado)
                     + "%, disponible " + formatearPorcentaje(disponible) + "%";
             runOnUiThread(() -> binding.tvPorcentajeDisponible.setText(texto));
+        });
+    }
+
+    /** Carga el curso y, si ya terminó, avisa y cierra la pantalla. */
+    private void cargarCurso() {
+        executor.execute(() -> {
+            if (cursoId != -1) {
+                curso = db.courseDao().obtenerPorId(cursoId);
+            }
+            cursoCargado = true;
+            if (curso != null && curso.yaTermino()) {
+                runOnUiThread(this::avisarCursoTerminadoYSalir);
+            }
+        });
+    }
+
+    private void avisarCursoTerminadoYSalir() {
+        if (isFinishing()) return;
+        Course c = curso;
+        String fin = c != null ? formatoFecha.format(new Date(c.getFechaFinalizacion())) : "";
+        new AlertDialog.Builder(this)
+                .setTitle("Curso finalizado")
+                .setMessage("Este curso finalizó el " + fin
+                        + ". Ya no se pueden crear, editar ni eliminar foros.")
+                .setCancelable(false)
+                .setPositiveButton("Entendido", (d, w) -> finish())
+                .show();
+    }
+
+    private void cargarForoExistente() {
+        executor.execute(() -> {
+            Forum f = db.forumDao().obtenerPorId(foroId);
+            if (f == null) return;
+            foroExistente = f;
+            if (cursoId == -1) {
+                cursoId = f.getCursoId();
+            }
+
+            runOnUiThread(() -> {
+                binding.etTema.setText(f.getTema());
+                binding.spCorte.setSelection(Math.max(0, f.getCorte() - 1));
+                if (f.getPorcentaje() > 0) {
+                    binding.etPorcentaje.setText(formatearPorcentaje(f.getPorcentaje()));
+                }
+
+                if (f.getFechaApertura() > 0) {
+                    fechaApertura.setTimeInMillis(f.getFechaApertura());
+                    aperturaFechaSeleccionada = true;
+                    aperturaHoraSeleccionada = true;
+                    binding.etFechaApertura.setText(formatoFecha.format(fechaApertura.getTime()));
+                    binding.etHoraApertura.setText(String.format(Locale.getDefault(), "%02d:%02d",
+                            fechaApertura.get(Calendar.HOUR_OF_DAY), fechaApertura.get(Calendar.MINUTE)));
+                }
+
+                if (f.getFechaCierre() > 0) {
+                    fechaCierre.setTimeInMillis(f.getFechaCierre());
+                    cierreFechaSeleccionada = true;
+                    cierreHoraSeleccionada = true;
+                    binding.etFechaCierre.setText(formatoFecha.format(fechaCierre.getTime()));
+                    binding.etHoraCierre.setText(String.format(Locale.getDefault(), "%02d:%02d",
+                            fechaCierre.get(Calendar.HOUR_OF_DAY), fechaCierre.get(Calendar.MINUTE)));
+                }
+
+                actualizarPorcentajeDisponible();
+            });
         });
     }
 
@@ -136,6 +223,26 @@ public class ForumFormActivity extends AppCompatActivity {
     }
 
     private void guardar() {
+        // El curso todavía se está cargando
+        if (cursoId != -1 && !cursoCargado) {
+            Toast.makeText(this, "Cargando datos del curso, intenta de nuevo", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // En modo edición el foro todavía se está cargando
+        final Forum foroActual = foroExistente;
+        if (modoEdicion && foroActual == null) {
+            Toast.makeText(this, "Cargando datos del foro, intenta de nuevo", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Si el curso terminó mientras la pantalla estaba abierta, no se guarda nada
+        Course cursoActual = curso;
+        if (cursoActual != null && cursoActual.yaTermino()) {
+            avisarCursoTerminadoYSalir();
+            return;
+        }
+
         binding.tilTema.setError(null);
         binding.tilFechaCierre.setError(null);
         binding.tilPorcentaje.setError(null);
@@ -213,16 +320,31 @@ public class ForumFormActivity extends AppCompatActivity {
                 return;
             }
 
-            Forum nuevo = new Forum(cursoId, tema, "", System.currentTimeMillis(), aperturaFinal,
-                    cierreFinal, corteFinal);
-            nuevo.setPorcentaje(porcentajeFinal);
-            db.forumDao().insertar(nuevo);
+            if (modoEdicion) {
+                Forum actualizado = new Forum(foroActual.getCursoId(), tema, foroActual.getDescripcion(),
+                        foroActual.getFechaCreacion(), aperturaFinal, cierreFinal, corteFinal);
+                actualizado.setId(foroId);
+                actualizado.setPorcentaje(porcentajeFinal);
+                db.forumDao().actualizar(actualizado);
 
-            runOnUiThread(() -> new AlertDialog.Builder(this)
-                    .setTitle("Foro creado")
-                    .setCancelable(false)
-                    .setPositiveButton("Aceptar", (d, w) -> finish())
-                    .show());
+                runOnUiThread(() -> new AlertDialog.Builder(this)
+                        .setTitle("Foro actualizado")
+                        .setMessage("Los cambios se guardaron correctamente.")
+                        .setCancelable(false)
+                        .setPositiveButton("Aceptar", (d, w) -> finish())
+                        .show());
+            } else {
+                Forum nuevo = new Forum(cursoId, tema, "", System.currentTimeMillis(), aperturaFinal,
+                        cierreFinal, corteFinal);
+                nuevo.setPorcentaje(porcentajeFinal);
+                db.forumDao().insertar(nuevo);
+
+                runOnUiThread(() -> new AlertDialog.Builder(this)
+                        .setTitle("Foro creado")
+                        .setCancelable(false)
+                        .setPositiveButton("Aceptar", (d, w) -> finish())
+                        .show());
+            }
         });
     }
 }

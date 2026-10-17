@@ -21,6 +21,10 @@ public interface ForumPostDao {
     @Query("SELECT COUNT(*) FROM comentarios_foro WHERE foroId = :foroId")
     int contarPorForo(int foroId);
 
+    /** Borra todas las participaciones de un foro (se usa al eliminar el foro) */
+    @Query("DELETE FROM comentarios_foro WHERE foroId = :foroId")
+    void eliminarPorForo(int foroId);
+
     @Query("SELECT autorId, COUNT(*) as cantidad FROM comentarios_foro " +
             "WHERE foroId IN (SELECT id FROM foros WHERE cursoId = :cursoId) " +
             "AND fecha BETWEEN :desde AND :hasta " +

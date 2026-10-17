@@ -21,4 +21,8 @@ public interface ForumGradeDao {
 
     @Query("SELECT fg.* FROM calificaciones_foro fg INNER JOIN foros f ON fg.foroId = f.id WHERE f.cursoId = :cursoId AND fg.estudianteId = :estudianteId")
     List<ForumGrade> listarPorCursoYEstudiante(int cursoId, int estudianteId);
+
+    /** Borra todas las calificaciones de un foro (se usa al eliminar el foro) */
+    @Query("DELETE FROM calificaciones_foro WHERE foroId = :foroId")
+    void eliminarPorForo(int foroId);
 }
